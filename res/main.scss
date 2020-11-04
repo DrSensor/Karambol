@@ -1,0 +1,38 @@
+html,
+body {
+    padding : 0;
+    margin  : 0;
+    overflow: hidden;
+}
+
+body {
+
+    &,
+    >* {
+        width : 100%;
+        height: 100%;
+    }
+
+    >* {
+        position: absolute;
+    }
+}
+
+#viewport,
+#hud {
+    background: transparent;
+}
+
+#viewport {
+    z-index        : 0;
+    /* font-size   : 0; */
+    touch-action   : none;
+}
+
+#hud {
+    z-index: 1;
+}
+
+#menu {
+    z-index: 2;
+}

@@ -1,0 +1,6 @@
+{
+    "startLevel": "tutorial",
+    "menu": true,
+    "hud": true,
+    "debugLayer": false
+}

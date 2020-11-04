@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "plugins": [
+            {
+                "name": "typescript-styled-plugin",
+            }
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "~/*": [
+                "*"
+            ]
+        },
+        "jsx": "react",
+        "jsxFactory": "h",
+        "resolveJsonModule": true
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "name": "ammojs",
+    "main": "index.js",
+    "files": [
+        "ammo.wasm.wasm"
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "scripts": {
+        "clear-cache": "rm -r node_modules/.cache/*",
+        "start": "snowpack dev",
+        "build": "snowpack build",
+        "postinstall": "vendor/install.mjs && .scripts/mkcert.mjs"
+    },
+    "dependencies": {
+        "@babylonjs/core": "^4.1.0",
+        "@babylonjs/inspector": "^4.1.0",
+        "ammojs": "link:vendor/ammojs",
+        "ecsy": "^0.4.2",
+        "goober": "^2.0.13",
+        "sinuous": "^0.27.11",
+        "d3-fetch": "^2.0.0"
+    },
+    "devDependencies": {
+        "@snowpack/plugin-dotenv": "^2.0.4",
+        "@snowpack/plugin-optimize": "^0.2.7",
+        "@snowpack/plugin-sass": "^1.1.1",
+        "mkcert": "^1.4.0",
+        "degit": "^2.8.0",
+        "snowpack": "^2.16.1",
+        "typescript": "^4.0.5",
+        "typescript-styled-plugin": "^0.15.0"
+    },
+    "engines": {
+        "node": ">=14.14.0"
+    }
+}
