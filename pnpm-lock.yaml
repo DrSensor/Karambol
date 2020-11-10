@@ -3,13 +3,16 @@ dependencies:
   '@babylonjs/inspector': 4.1.0
   ammojs: 'link:vendor/ammojs'
   d3-fetch: 2.0.0
+  device-detector-js: 2.2.5
   ecsy: 0.4.2
-  goober: 2.0.13
+  goober: 2.0.13_csstype@2.6.13
   sinuous: 0.27.11
 devDependencies:
   '@snowpack/plugin-dotenv': 2.0.4
   '@snowpack/plugin-optimize': 0.2.7
   '@snowpack/plugin-sass': 1.1.1
+  '@types/d3-fetch': 2.0.0
+  csstype: 2.6.13
   degit: 2.8.0
   mkcert: 1.4.0
   snowpack: 2.16.1
@@ -223,6 +226,16 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Ozf6gS6Z4VZ5Wjr0GTENlJq+Ly2vHia2JnOQ6vIEKhvI3OboZnIC5cxulFfOXy1M4nUCZF1ujvz2qvYA/CsY1Q==
+  /@types/d3-dsv/2.0.0:
+    dev: true
+    resolution:
+      integrity: sha512-wYqy7T8tQ/DmocwxmlPujllLI5fg3lb6/FrVVWkLUD+NsRV+kcE4nbRZg10G9yjJ8pK2ZXqu+VP5jQbN13uNRQ==
+  /@types/d3-fetch/2.0.0:
+    dependencies:
+      '@types/d3-dsv': 2.0.0
+    dev: true
+    resolution:
+      integrity: sha512-WnLepGtxepFfXRdPI8I5FTgNiHn9p4vMTTqaNCzJJfAswXx0rOY2jjeolzEU063em3iJmGZ+U79InnEeFOrCRw==
   /@types/estree/0.0.39:
     dev: true
     resolution:
@@ -544,6 +557,10 @@ packages:
       node: '>=8.0.0'
     resolution:
       integrity: sha512-h+6w/W1WqXaJA4tb1dk7r5tVbOm97MsKxzwnvOR04UQ6GILroryjMWu3pmCCtL2mLaEStQ0fZgeGiy99mo7iyg==
+  /csstype/2.6.13:
+    dev: true
+    resolution:
+      integrity: sha512-ul26pfSQTZW8dcOnD2iiJssfXw0gdNVX9IJDH/X3K5DGPfj+fUYe3kB+swUY6BF3oZDxaID3AJt+9/ojSAE05A==
   /d3-dsv/2.0.0:
     dependencies:
       commander: 2.20.3
@@ -594,6 +611,12 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-E+B1gzkl2gqxt1IhUzwjrxBKRqx1UzC3WLONHinn8S3T6lwV/agVCyitiFOsGJ/eYuEUBvD71MZHy3Pv1G9doQ==
+  /device-detector-js/2.2.5:
+    dev: false
+    engines:
+      node: '>= 8.11.4'
+    resolution:
+      integrity: sha512-TW9TJRjzCv0TD5hKiVcgqxq5egT14NVwPg7jBv84h4qjpc4weVtEuYEtMfgtXAsV+NUU9oKSme2Gvm4nSoNn+A==
   /dotenv-expand/5.1.0:
     dev: true
     resolution:
@@ -792,7 +815,9 @@ packages:
     dev: true
     resolution:
       integrity: sha512-LwaxwyZ72Lk7vZINtNNrywX0ZuLyStrdDtabefZKAY5ZGJhVtgdznluResxNmPitE0SAO+O26sWTHeKSI2wMBA==
-  /goober/2.0.13:
+  /goober/2.0.13_csstype@2.6.13:
+    dependencies:
+      csstype: 2.6.13
     dev: false
     peerDependencies:
       csstype: ^2.6.2
@@ -1840,9 +1865,12 @@ specifiers:
   '@snowpack/plugin-dotenv': ^2.0.4
   '@snowpack/plugin-optimize': ^0.2.7
   '@snowpack/plugin-sass': ^1.1.1
+  '@types/d3-fetch': ^2.0.0
   ammojs: 'link:vendor/ammojs'
+  csstype: ^2.6.13
   d3-fetch: ^2.0.0
   degit: ^2.8.0
+  device-detector-js: ^2.2.5
   ecsy: ^0.4.2
   goober: ^2.0.13
   mkcert: ^1.4.0

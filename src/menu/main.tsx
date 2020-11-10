@@ -1,7 +1,8 @@
+import type { Component } from './.utils'
 import { o, h } from 'sinuous'
 
 import { render, lifecycle, /* dynamic */ } from './.utils'
-import type { Component } from './.utils'
+import { Platform } from '../feature-detection'
 
 // import { styled, css } from 'goober'
 
@@ -17,7 +18,7 @@ export default ({ onstart }: Partial<EventListener> = {}) => {
 
         start = () => {
             menu(null)
-            screen.orientation.lock('portrait-primary')
+            if (platform != Platform.Desktop) screen.orientation.lock('portrait-primary')
             onstart({ ...lifecycle(View)/* , reserved for propsState */ })
         }
 

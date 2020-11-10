@@ -10,13 +10,15 @@
     <meta name="description" content="A simplified version of traditional tabletop game known as Carrom" />
     <title>Karambol</title>
 
-    <link rel="stylesheet" href="/res/main.css" />
-    <script type="module" src="/src/main.js" defer></script>
-
     <script src="/vendor/ammojs/index.js" async></script>
+    <link rel="modulepreload" href="/web_modules/device-detector-js.js" as="script" />
+    <link rel="preload" href="/vendor/ARCore/arcore_devicelist.csv" as="fetch" />
+
+    <script type="module" src="/src/main.js" defer></script>
+    <link rel="stylesheet" href="/res/main.css" />
 </head>
 
-<body>
+<body oncontextmenu="return false">
     <div id="menu"></div>
     <svg id="hud"></svg>
     <canvas id="viewport"></canvas>
