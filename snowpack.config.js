@@ -1,19 +1,23 @@
+const { BROWSER } = process.env
 module.exports = {
     exclude: [".scripts/**", "vendor/install.*js"],
     devOptions: {
-        open: ".scripts/browser.sh",
-        secure: true
+        open: BROWSER ? ".scripts/browser.sh" : "none",
+        secure: true,
     },
     alias: { "~": "." },
+    // install: ["memo", "sinuous/observable"],
     plugins: [
         ["@snowpack/plugin-optimize", {
-            target: ["chrome81"], // target WebXR AR support
+            target: ["chrome83"], // target WebXR DOM Overlays
             preloadModules: true
         }],
         ["@snowpack/plugin-sass", { native: true }],
-        "@snowpack/plugin-dotenv"
+        "@snowpack/plugin-dotenv",
+        "./.scripts/snowpack-plugin/jsx-factory.js",
     ],
     installOptions: {
+        installTypes: true,
         polyfillNode: false,
         rollup: {
             plugins: [

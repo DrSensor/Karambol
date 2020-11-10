@@ -1,8 +1,12 @@
 {
+    "include": ["src"],
     "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Node",
         "plugins": [
             {
-                "name": "typescript-styled-plugin",
+                "name": "typescript-styled-plugin"
             }
         ],
         "baseUrl": ".",
@@ -11,8 +15,11 @@
                 "*"
             ]
         },
-        "jsx": "react",
+        "jsx": "preserve",
         "jsxFactory": "h",
-        "resolveJsonModule": true
+        "jsxFragmentFactory": "null",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "noEmit": true
     }
 }
