@@ -1,10 +1,10 @@
 dependencies:
   '@babylonjs/core': 4.1.0
   '@babylonjs/inspector': 4.1.0
+  '@javelin/ecs': 0.19.2
   ammojs: 'link:vendor/ammojs'
   d3-fetch: 2.0.0
   device-detector-js: 2.2.5
-  ecsy: 0.4.2
   goober: 2.0.13_csstype@2.6.13
   sinuous: 0.27.11
 devDependencies:
@@ -12,6 +12,7 @@ devDependencies:
   '@snowpack/plugin-optimize': 0.2.7
   '@snowpack/plugin-sass': 1.1.1
   '@types/d3-fetch': 2.0.0
+  '@types/dom-screen-wake-lock': 1.0.0
   csstype: 2.6.13
   degit: 2.8.0
   mkcert: 1.4.0
@@ -90,6 +91,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Ce3xE2JvTSEbASFbRbA1gAIcMcZWdS2yUYRaQbeM0nbOzaZrUYfa3ePtcriYRZOZmr+CkKA+zbjhvTpIOAYVcw==
+  /@javelin/ecs/0.19.2:
+    dev: false
+    resolution:
+      integrity: sha512-uMnEXZRtEaZhuhJ4MpA0JC0xT+gfg9PpZAy25h3x66lvRt7S9kYtIxXOdsT5Ujn87pdNJdv0ET+Haar6vOK8ug==
   /@npmcli/move-file/1.0.1:
     dependencies:
       mkdirp: 1.0.4
@@ -236,6 +241,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-WnLepGtxepFfXRdPI8I5FTgNiHn9p4vMTTqaNCzJJfAswXx0rOY2jjeolzEU063em3iJmGZ+U79InnEeFOrCRw==
+  /@types/dom-screen-wake-lock/1.0.0:
+    dev: true
+    resolution:
+      integrity: sha512-3o5jkfJsuhFcKj2EZ3PiEoiQQbB3J/nffsXJBKtyubkBHsX2siS6b4uij3ukr5xgDHsF4BaT9fHo8DneAw/YxA==
   /@types/estree/0.0.39:
     dev: true
     resolution:
@@ -627,10 +636,6 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
-  /ecsy/0.4.2:
-    dev: false
-    resolution:
-      integrity: sha512-dVKOkuz1IsRvS7GlHcWghUtMZzXr70h6b+SQEHlKy2RgsCRNDzdYr6a43Q6HafuquA/67YFZCQt8zqadq/jlLA==
   /end-of-stream/1.4.4:
     dependencies:
       once: 1.4.0
@@ -1862,16 +1867,17 @@ packages:
 specifiers:
   '@babylonjs/core': ^4.1.0
   '@babylonjs/inspector': ^4.1.0
+  '@javelin/ecs': ^0.19.2
   '@snowpack/plugin-dotenv': ^2.0.4
   '@snowpack/plugin-optimize': ^0.2.7
   '@snowpack/plugin-sass': ^1.1.1
   '@types/d3-fetch': ^2.0.0
+  '@types/dom-screen-wake-lock': ^1.0.0
   ammojs: 'link:vendor/ammojs'
   csstype: ^2.6.13
   d3-fetch: ^2.0.0
   degit: ^2.8.0
   device-detector-js: ^2.2.5
-  ecsy: ^0.4.2
   goober: ^2.0.13
   mkcert: ^1.4.0
   sinuous: ^0.27.11

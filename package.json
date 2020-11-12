@@ -10,10 +10,10 @@
     "dependencies": {
         "@babylonjs/core": "^4.1.0",
         "@babylonjs/inspector": "^4.1.0",
+        "@javelin/ecs": "^0.19.2",
         "ammojs": "link:vendor/ammojs",
         "d3-fetch": "^2.0.0",
         "device-detector-js": "^2.2.5",
-        "ecsy": "^0.4.2",
         "goober": "^2.0.13",
         "sinuous": "^0.27.11"
     },
@@ -22,6 +22,7 @@
         "@snowpack/plugin-optimize": "^0.2.7",
         "@snowpack/plugin-sass": "^1.1.1",
         "@types/d3-fetch": "^2.0.0",
+        "@types/dom-screen-wake-lock": "^1.0.0",
         "csstype": "^2.6.13",
         "degit": "^2.8.0",
         "mkcert": "^1.4.0",

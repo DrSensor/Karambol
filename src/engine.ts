@@ -1,140 +1,147 @@
-import { PropType, System, World, WorldOptions, ComponentSchemaProp } from 'ecsy'
+import { createWorld, World, System, ComponentType } from '@javelin/ecs'
 import {
     Engine, Scene, AmmoJSPlugin,
-    Vector3, Color4,
+    Vector3, Color4, Color3,
 } from '@babylonjs/core'
 
-// In case there is 2 implementation (e.g Pixi.js for World2D and Babylon.js for World3D)
-export { BabylonWorld as World, BabylonSystem as System, Schema }
-export * from 'ecsy'
+interface Data {
+    readonly scene:
+    & RequiredScene<'main'>
+    // & OptionalScene<'map' | 'zoom'>
+    // & OptionalScene<'nogravity'>
 
-interface Options {
-    fullscreen?: boolean,
-    renderLoops?: [() => void]
+    /** delta time on each world update */
+    readonly dt: number
+    readonly state: 'start' | 'pause' | 'stop'
 }
 
-interface EventListener {
-    onpause: () => void
-    onresume: () => void
+type LifeCycleArgs = Partial<{ fullscreen: boolean }>
+interface LifeCycle {
+    start(args?: LifeCycleArgs): Promise<void>
+    pause(args?: LifeCycleArgs): Promise<void>
+    stop(): void
 }
 
-interface Schema<Type, Value> extends ComponentSchemaProp {
-    type: PropType<Type, Value>
-    default?: Value
+interface LifeCycleEventHandler {
+    onstart(): Void
+    onpause(): Void
+    onstop(): Void
 }
 
-abstract class BabylonSystem extends System {
-    world: BabylonWorld
+interface WorldOptions {
+    systems?: System<Data>[]
+    componentTypes?: ComponentType[]
 }
 
-class BabylonWorld extends World implements EventListener {
-    scene: // TODO(babylon-ecs): make this.scene generic
-        & RequiredScene<'main'>
-        & OptionalScene<'map' | 'some'>
+type Options = Partial<Readonly<
+    & LifeCycleEventHandler
+    & { renderLoops: [() => void] }
+    & WorldOptions
+>>
+type Return = Readonly<
+    & World<Data>
+    & LifeCycle
+>
 
-    #engine: Engine
-    #opts: Options
-    #wakelock: WakeLockSentinel
+export default ({
+    onstart, onpause, onstop,
+    renderLoops, ...worldOpts
+}: Options): Return => {
+    let state: Data['state'],
+        wakelock: Partial<WakeLockSentinel>
 
-    constructor({ entityPoolSize, ...options }: WorldOptions & Options) {
-        super({ entityPoolSize })
-        this.#opts = options
-        const canvas = document.getElementById('viewport') as HTMLCanvasElement
-        this.#engine = new Engine(canvas, true, {
+    const
+        world = createWorld<Data>(worldOpts),
+        canvas = document.getElementById('viewport') as HTMLCanvasElement,
+        engine = new Engine(canvas, true, {
             preserveDrawingBuffer: true,
             stencil: true,
             antialias: true,
             alpha: true,
             limitDeviceRatio: window.devicePixelRatio,
-        }, true)
+        }, true),
+        main = Object.assign(new Scene(engine), {
+            clearColor: new Color4(0, 0, 0, 0),
+            ambientColor: new Color3(0, 0, 0),
+            fogColor: new Color3(0, 0, 0),
+        } as Scene)
 
-        // at least create 1 default scene
-        this.scene.main = new Scene(this.#engine)
-        this.scene.main.clearColor = new Color4(0, 0, 0, 0)
-        this.scene.main.enablePhysics(
-            new Vector3(0, -9.81, 0), // gravity
-            new AmmoJSPlugin())
+    main.enablePhysics(
+        new Vector3(0, -9.81, 0), // gravity
+        new AmmoJSPlugin())
 
-        window.onresize = () => this.#engine.resize()
-        document.onvisibilitychange = async () => {
-            switch (document.visibilityState) {
-                case 'visible':
-                    this.#engine.runRenderLoop(this.#frozenScene)
-                    // @ts-expect-error
-                    this.#wakelock ??= await navigator.wakeLock?.request('screen')
-                    break
-                case 'hidden':
-                    this.pause()
-                    break
-            }
+    window.onresize = () => engine.resize()
+    document.onvisibilitychange = async () => {
+        switch (document.visibilityState) {
+            case 'visible':
+                engine.runRenderLoop(frozenScenes)
+                wakelock ??= await navigator.wakeLock?.request('screen')
+                break
+            case 'hidden':
+                game.pause()
+                break
         }
     }
-    onpause: () => void
-    onresume: () => void
 
-    addScene(
-        name: keyof InstanceType<typeof BabylonWorld>['scene'],
-        CreateScene: typeof Scene,
-        opts?:
-            | DTO<Scene>
-            | ((scene: Scene, name: string) => void)
-    ) {
-        this.scene[name] = new CreateScene(this.#engine)
+    const
+        renderScenes = (unfreeze = true) => {
+            const { scenes, getDeltaTime } = engine
+            scenes.forEach(scene => scene.render(unfreeze, !unfreeze))
+            if (unfreeze) world.tick({
+                dt: getDeltaTime(),
+                scene: { main },
+                state,
+            })
+        },
+        frozenScenes = () => renderScenes(false)
 
-        if (opts instanceof Function) opts(this.scene[name], name)
-        else Object.assign(this.scene[name], opts)
-        return this
-    }
+    const game: LifeCycle = {
+        start: async ({ fullscreen = true } = {}) => {
+            if (!document.pointerLockElement)
+                document.body.requestPointerLock()
+            if (!document.fullscreenElement && fullscreen)
+                document.body.requestFullscreen({ navigationUI: 'hide' })
 
-    async play() {
-        const { fullscreen, renderLoops } = this.#opts
-        super.play()
-        if (!document.fullscreenElement && fullscreen)
-            document.body.requestFullscreen({ navigationUI: 'hide' })
+            // video ??= await skybox() // TODO: when supporting pseudo WebAR
 
-        // video ??= await skybox() // TODO: support WebAR
-        const resume = () => {
+            if (!wakelock)
+                wakelock = await navigator.wakeLock?.request('screen') ?? {}
+            else // if press play after switch tab
+                engine.stopRenderLoop(frozenScenes)
+
             // video?.play()
-            this.#engine.runRenderLoop(this.#mainScene)
+            engine.runRenderLoop(renderScenes)
             for (const renderer of renderLoops)
-                this.#engine.runRenderLoop(renderer)
-            this.onresume()
+                engine.runRenderLoop(renderer)
+            state = 'start'
+            onstart()
+        },
+        pause: async ({ fullscreen = false } = {}) => {
+            if (document.pointerLockElement)
+                document.exitPointerLock()
+            if (document.fullscreenElement && !fullscreen)
+                document.exitFullscreen()
+            if (wakelock) {
+                engine.stopRenderLoop()
+                wakelock = await wakelock?.release()
+                // video?.pause()
+            }
+            state = 'pause'
+            onpause()
+        },
+        stop: () => {
+            engine.stopRenderLoop()
+            wakelock?.release()
+            document.exitPointerLock()
+            state = 'stop'
+            onstop()
         }
-
-        if (!this.#wakelock) {
-            resume()
-            // @ts-expect-error
-            this.#wakelock = await navigator.wakeLock?.request('screen')
-        } else { // if press play after switch tab
-            this.#engine.stopRenderLoop(this.#frozenScene)
-            resume()
-        }
     }
 
-    async pause({ unfullscreen = true } = {}) {
-        if (document.fullscreenElement && unfullscreen)
-            document.exitFullscreen()
-        if (this.#wakelock) {
-            this.#engine.stopRenderLoop()
-            this.#wakelock = await this.#wakelock.release()
-            // video?.pause()
-        }
-        this.onpause()
-    }
-
-    async stop() {
-        super.stop()
-        await this.pause()
-    }
-
-    #frozenScene = () => this.#mainScene(true)
-    #mainScene = (freeze?: boolean) => {
-        const { scenes, getDeltaTime } = this.#engine
-        if (!freeze) this.execute(getDeltaTime(), performance.now())
-        scenes.forEach(scene => scene.render(!freeze, freeze))
-    }
+    // return Object.assign(world, lifecycle) // cuz there is no setter
+    return { ...world, ...game } // no polyfill cuz it target chrome83
 }
 
-type WakeLockSentinel = any
 type RequiredScene<T extends string> = { [K in T]: Scene }
 type OptionalScene<T extends string> = Partial<RequiredScene<T>>
+type Void = void | Promise<void>
