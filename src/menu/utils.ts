@@ -39,6 +39,8 @@ const
 //     memoComp = memo(comp => memo((props, children) => root(() => comp(props, children)))) as (comp: any) => any,
 //     dynamic = comp => (props, ...children) => () => memoComp(comp())(props, children)
 
+export type { JSX } from 'sinuous'
+export type { Observable } from 'sinuous/observable'
+
 export type { AsObservable, Component }
 export { lifecycle, render, /* dynamic */ }
-

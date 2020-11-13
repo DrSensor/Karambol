@@ -1,7 +1,7 @@
-import type { Component } from './.utils'
+import type { Component } from './utils'
 import { o, h } from 'sinuous'
 
-import { render, lifecycle, /* dynamic */ } from './.utils'
+import { render, lifecycle, /* dynamic */ } from './utils'
 import { Platform } from '../feature-detection'
 
 // import { styled, css } from 'goober'
@@ -11,18 +11,21 @@ interface EventListener {
 }
 
 export default ({ onstart }: Partial<EventListener> = {}) => {
-    const menu = o(null), View = h([() => menu()])
-
     const // event handler
-        transition = (comp: Component) => () => menu(comp),
+        transition = (comp: Component) => () => Menu(comp),
 
         start = () => {
-            menu(null)
             if (platform != Platform.Desktop) screen.orientation.lock('portrait-primary')
-            onstart({ ...lifecycle(View)/* , reserved for propsState */ })
+            onstart({ // TODO(sinuous): make PR for h(tag: () => DocumentFragment, ...)
+                ...lifecycle(h(null, null, Menu()))
+                /* , reserved for propsState */
+            })
+            Menu(null)
         }
 
     const // component
+        Menu = o<Component>(null),
+
         Main = () => h([
             <button onClick={start}>Start</button>,
             <button onClick={transition(Credits)}>Credits</button>,
@@ -33,9 +36,9 @@ export default ({ onstart }: Partial<EventListener> = {}) => {
             <p>Credits:</p>,
         ]),
 
-        Menu = () => { menu(Main); return View }
+        View = () => { Menu(Main); return h([Menu]) }
 
     // TODO: use this JSX when https://github.com/luwes/sinuous/issues/147 resolved
     // return render(<Menu />)
-    return render(Menu())
+    return render(View())
 }
