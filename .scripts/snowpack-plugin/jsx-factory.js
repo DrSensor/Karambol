@@ -19,7 +19,7 @@ module.exports = (snowpackConfig, { jsxFactory = 'h', jsxFragment = 'null' }) =>
             const
                 content = await readFile(filePath, 'utf-8'),
                 loader = fileExt.slice(fileExt.lastIndexOf('.') + 1),
-                { js: code, jsSourceMap: map } = await transform(content,
+                { code, map } = await transform(content,
                     { loader, jsxFactory, jsxFragment })
 
             return { '.js': { code, map } }
