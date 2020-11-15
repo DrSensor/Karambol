@@ -1,7 +1,11 @@
 import type { World, System, ComponentType } from '@javelin/ecs'
 
 import { createWorld } from '@javelin/ecs'
-import { Engine, Scene, Color4, Color3 } from '@babylonjs/core/Engines/engine'
+
+import { Engine } from '@babylonjs/core/Engines/engine'
+import { Color4, Color3 } from '@babylonjs/core/Maths/math'
+import { Scene } from '@babylonjs/core/scene'
+import '@babylonjs/core/Helpers/sceneHelpers'
 
 type Options = Partial<Readonly<
     & LifeCycleEventHandler

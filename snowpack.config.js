@@ -10,7 +10,7 @@ module.exports = {
     plugins: [
         ["@snowpack/plugin-optimize", {
             target: ["chrome83"], // target WebXR DOM Overlays
-            preloadModules: true
+            preloadModules: false // TODO: wait until stable, or make PR
         }],
         ["@snowpack/plugin-sass", { native: true }],
         "@snowpack/plugin-dotenv",

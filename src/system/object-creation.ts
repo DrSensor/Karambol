@@ -1,5 +1,7 @@
-import { Mesh, MeshBuilder } from '@babylonjs/core'
-import { System } from '../engine'
+import type { Mesh } from '@babylonjs/core'
+import type { System } from '../engine'
+
+import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 
 export namespace Obstacle {
     export const meshes: Mesh[] = []
