@@ -1,6 +1,8 @@
 import type { JSX } from 'sinuous'
 import type { Observable } from 'sinuous/observable'
 
+import menu from './index'
+
 type AsObservable<T> = { [O in keyof T]: Observable<T[O]> }
 type Props = { [key: string]: Observable<any> }
 
@@ -22,14 +24,14 @@ const
         view,
         destroy: () => view.parentNode.removeChild(view),
         into: (Menu, ...opts) => {
-            const menu = Menu(...opts), parent = view.parentNode
-            parent.append(menu.view)
+            const comp = Menu(...opts), parent = view.parentNode
+            parent.append(comp.view)
             parent.removeChild(view)
-            return menu
+            return comp
         },
     }),
     render = <T extends Props>(view: Element, props?: T) => {
-        document.getElementById('menu').append(view)
+        menu.append(view)
         return { ...lifecycle(view), ...props }
     }
 

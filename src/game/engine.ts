@@ -1,5 +1,6 @@
 import type { World, System, ComponentType } from '@javelin/ecs'
 
+import canvas from './index'
 import { createWorld } from '@javelin/ecs'
 
 import { Engine } from '@babylonjs/core/Engines/engine'
@@ -10,12 +11,15 @@ import '@babylonjs/core/Helpers/sceneHelpers'
 type Options = Partial<Readonly<
     & LifeCycleEventHandler
     & { renderLoops: [() => void] }
-    & WorldOptions
+    & Level
 >>
 type Return = Readonly<
-    & World<SystemData>
+    & ThisWorld
     & LifeCycle
 >
+
+type ThisSystem = System<SystemData>
+type ThisWorld = World<SystemData>
 
 interface Data {
     readonly scene:
@@ -45,15 +49,11 @@ interface LifeCycle {
     stop(): void
 }
 
-type ThisSystem = System<SystemData>
-interface WorldOptions {
+export type { ThisSystem as System, ThisWorld as World }
+export interface Level {
     systems?: ThisSystem[]
     componentTypes?: ComponentType[]
 }
-
-export { ThisSystem as System }
-export const canvas =
-    document.getElementById('viewport') as HTMLCanvasElement
 
 export default ({
     onstart, onpause, onstop, onresume,

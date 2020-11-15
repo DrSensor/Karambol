@@ -1,14 +1,11 @@
-import init, { canvas } from './engine'
-import { Obstacle } from './system'
-import { MainMenu, menu } from './menu'
+import canvas, { game as init, sandboxLevel } from './game'
+import menu, { MainMenu } from './menu'
 
 import { Style } from './utils'
 
 console.log(globalThis.platform) // undefined
 
-const game = init({
-    systems: [Obstacle.createBox]
-})
+const game = init(sandboxLevel)
 
 MainMenu({
     onstart({ view }) {
