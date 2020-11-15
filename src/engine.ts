@@ -1,11 +1,7 @@
-import {
-    createWorld, World,
-    System, ComponentType,
-} from '@javelin/ecs'
-import {
-    Engine, Scene,
-    Color4, Color3,
-} from '@babylonjs/core'
+import type { World, System, ComponentType } from '@javelin/ecs'
+
+import { createWorld } from '@javelin/ecs'
+import { Engine, Scene, Color4, Color3 } from '@babylonjs/core/Engines/engine'
 
 type Options = Partial<Readonly<
     & LifeCycleEventHandler
@@ -27,38 +23,39 @@ interface Data {
 interface SystemData extends Data {
     /** delta time on each world update */
     readonly dt: number
-    readonly state: 'start' | 'pause' | 'stop'
+    readonly state: 'start' | 'resume' | 'playing' | 'pause' | 'stop'
 }
+
+type LifeCycleEventHandler = Omit<{
+    readonly [K in `on${SystemData['state']}`]: ({ }: Data) => Void
+}, 'onplaying'>
 
 type LifeCycleArgs = Partial<{
     fullscreen: boolean
     cursor: boolean
 }>
+
 interface LifeCycle {
     start({ }?: LifeCycleArgs): Promise<void>
     pause({ }?: LifeCycleArgs): Promise<void>
     stop(): void
 }
 
-interface LifeCycleEventHandler {
-    onstart({ }: Data): Void
-    onpause({ }: Data): Void
-    onstop({ }: Data): Void
-}
-
+type ThisSystem = System<SystemData>
 interface WorldOptions {
-    systems?: System<SystemData>[]
+    systems?: ThisSystem[]
     componentTypes?: ComponentType[]
 }
 
+export { ThisSystem as System }
 export const canvas =
     document.getElementById('viewport') as HTMLCanvasElement
 
 export default ({
-    onstart, onpause, onstop,
+    onstart, onpause, onstop, onresume,
     renderLoops, ...worldOpts
 }: Options = {}): Return => {
-    let state: SystemData['state'],
+    let state: SystemData['state'] = 'stop',
         wakelock: Partial<WakeLockSentinel>
 
     const
@@ -102,11 +99,13 @@ export default ({
             engine.scenes.forEach(
                 scene => scene.render(unfreeze, !unfreeze))
         },
-        frozenScenes = () => renderScenes(false)
+        frozenScenes = () => renderScenes(false),
+        canNot = (currentState: typeof state) =>
+            Error(`game can't "${currentState}" from "${state}" state`)
 
     const game: LifeCycle = {
         start: async ({ fullscreen = true, cursor = false } = {}) => {
-            if (onstart) onstart({ scene })
+            if (!['pause', 'stop'].includes(state)) throw canNot('start')
 
             canvas.tabIndex = engine.canvasTabIndex; canvas.focus()
             if (!document.pointerLockElement && !cursor)
@@ -121,16 +120,29 @@ export default ({
             else // if press play after switch tab
                 engine.stopRenderLoop(frozenScenes)
 
-            // video?.play()
-            Object.values(scene).forEach(stage => stage
-                .createDefaultCameraOrLight(true, false, true))
+            switch (state) {
+                case 'pause':
+                    state = 'resume'
+                    if (onresume) onresume({ scene })
+                    world.tick({ dt: engine.getDeltaTime(), state, scene })
+                    break
+                case 'stop':
+                    state = 'start'
+                    if (onstart) onstart({ scene })
+                    world.tick({ dt: engine.getDeltaTime(), state, scene })
+                    Object.values(scene).forEach(stage => stage
+                        .createDefaultCameraOrLight(true, false, true))
+                    break
+            }
 
+            // video?.play()
             engine.runRenderLoop(renderScenes)
             if (renderLoops) for (const renderer of renderLoops)
                 engine.runRenderLoop(renderer)
-            state = 'start'
+            state = 'playing'
         },
         pause: async ({ fullscreen = false, cursor = true } = {}) => {
+            if (state !== 'playing') throw canNot('pause')
             if (onpause) onpause({ scene })
 
             canvas.removeAttribute('tabindex'); canvas.blur()
@@ -144,6 +156,7 @@ export default ({
             state = 'pause'
         },
         stop: () => {
+            if (state !== 'playing') throw canNot('stop')
             if (onstop) onstop({ scene }); document.exitPointerLock()
             engine.stopRenderLoop(); wakelock?.release()
             canvas.removeAttribute('tabindex'); canvas.blur()
