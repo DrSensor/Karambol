@@ -1,22 +1,44 @@
-import type { Mesh } from '@babylonjs/core'
-import type { System } from '../engine'
+import type { InstancedMesh, Mesh, Vector3 } from '@babylonjs/core'
+import type { System as S } from '../engine'
 
-import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
+import { Random } from '~/src/utils'
+import { BoxBuilder as MeshBuilder } from '@babylonjs/core/Meshes/Builders/boxBuilder'
 
 export namespace Obstacle {
-    export const meshes: Mesh[] = []
+    export const meshes: (Mesh | InstancedMesh)[] = []
 
-    export const createBox: System = (world, {
-        state, scene: { main }
-    }) => {
+    interface EventHandler {
+        onorigin?(mesh: Mesh): void
+        oninstance?(mesh: InstancedMesh): void
+    }
+    type RandomMeshes = EventHandler & {
+        count?: number,
+        position?: Vec3<Rangeof<number>> | (Rangeof<number | Vector3>)
+    }
+    type RandomCubes = RandomMeshes & { size?: number, scale?: Rangeof<number> }
+
+    export const randomCube = (props: RandomCubes): S => function system(
+        world, { state, scene: { main } }) {
+        const { onorigin, oninstance
+            , count = 1, size
+            , position = [0, 0]
+            , scale = [1, 1]
+        } = props
         switch (state) {
             case 'stop':
-                world.removeSystem(createBox)
                 while (meshes.length > 0) meshes.pop().dispose()
-                break
+                world.removeSystem(system); break
             case 'start':
-                meshes.push(MeshBuilder.CreateBox('box', {}, main))
-                break
+                const origin = MeshBuilder.CreateBox('box', { size }, main)
+                onorigin?.call(null, origin); meshes.push(origin)
+
+                for (const i of Array(count - 1)) {
+                    const instance = Object.assign(origin.createInstance('box'), {
+                        position: Random.vector3(position),
+                        scaling: Random.uniform.vector3(scale),
+                    } as InstancedMesh)
+                    oninstance?.call(null, instance); meshes.push(instance)
+                }; break
         }
     }
 }
