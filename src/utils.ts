@@ -1,6 +1,8 @@
 import type { Observable } from 'sinuous/observable'
 export namespace Observable {
     export type Record<T extends {}> = { [O in keyof T]: Observable<T[O]> }
+    export type RecordOf<T> = { [key: string]: Observable<T> }
+    export type AsProxy<T extends Record<any>> = { [K in keyof T]: ReturnType<T[K]> }
 }
 
 export namespace Style {

@@ -24,15 +24,27 @@ body {
     background: transparent;
 }
 
+
 #viewport {
     z-index        : 0;
     /* font-size   : 0; */
     touch-action   : none;
 }
 
+
 #hud {
-    z-index: 1;
+    @import 'svg'; // WARNING: `@use` doesn't work in snowpack
+
+    z-index       : 1;
+    pointer-events: none;
+    touch-action  : none;
+
+    text {
+        @include center-text;
+        font-size: 5pt;
+    }
 }
+
 
 #menu {
     z-index: 2;
