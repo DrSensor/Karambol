@@ -1,7 +1,7 @@
 import type { InstancedMesh, Mesh, Vector3 } from '@babylonjs/core'
 import type { System as S } from '../engine'
 
-import { Random } from '~/src/utils'
+import { Random } from '../utils'
 import { BoxBuilder as MeshBuilder } from '@babylonjs/core/Meshes/Builders/boxBuilder'
 
 export namespace Obstacle {

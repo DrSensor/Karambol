@@ -3,7 +3,6 @@ import type { Observable } from 'sinuous/observable'
 
 import menu from './index'
 
-type AsObservable<T> = { [O in keyof T]: Observable<T[O]> }
 type Props = { [key: string]: Observable<any> }
 
 type Element = JSX.Element | DocumentFragment
@@ -41,8 +40,5 @@ const
 //     memoComp = memo(comp => memo((props, children) => root(() => comp(props, children)))) as (comp: any) => any,
 //     dynamic = comp => (props, ...children) => () => memoComp(comp())(props, children)
 
-export type { JSX } from 'sinuous'
-export type { Observable } from 'sinuous/observable'
-
-export type { AsObservable, Component }
+export type { Component, Observable, JSX }
 export { lifecycle, render, /* dynamic */ }

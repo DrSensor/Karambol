@@ -1,57 +1,46 @@
-export namespace Style {
-    export type Inline = Exclude<keyof DTO<CSSStyleDeclaration>, 'length' | 'parentRule'>
-
-    export const swap = (el1: HTMLElement, el2: HTMLElement, style: Inline) => {
-        const tmp = getComputedStyle(el1)[style]
-        el1.style[style] = getComputedStyle(el2)[style]
-        el2.style[style] = tmp
-    }
-
-    export const reset = (el: HTMLElement, style?: Inline) =>
-        style ? el.style[style] = null : el.removeAttribute('style')
+import type { Observable } from 'sinuous/observable'
+export namespace Observable {
+    export type Record<T extends {}> = { [O in keyof T]: Observable<T[O]> }
 }
 
+export namespace Style {
+    type AnyElement = HTMLElement | SVGElement
+    export type Inline = Exclude<keyof DTO<CSSStyleDeclaration>, 'length' | 'parentRule'>
 
-import { Vector3 } from '@babylonjs/core/Maths/math'
-
-export namespace Convert {
-    const { assign } = Object
-    export const asVector3 = ({ x, y, z }: Vec3<number | Rangeof<number>>): Vector3 | Rangeof<Vector3> =>
-        Vec3.isRangeofNumber({ x, y, z }) ? [
-            new Vector3(x[0], y[0], z[0]),
-            new Vector3(x[1], y[1], z[1])
-        ] : assign(new Vector3(), { x, y, z })
+    export const
+        swap = (style: Inline, ...elements: AnyElement[]) => {
+            const swap = (el1: AnyElement, el2: AnyElement) => {
+                const tmp = getComputedStyle(el1)[style]
+                el1.style[style] = getComputedStyle(el2)[style]
+                el2.style[style] = tmp
+            }; for (const i of elements.keys()) {
+                const { length } = elements, el = elements
+                if (i == length - 1) /*swap(el[i], el[0])*/break // don't rotate
+                else if (length > 2) swap(el[i], el[i + 1])
+            }
+        },
+        reset = (el: HTMLElement, style?: Inline) =>
+            style ? el.style[style] = null : el.removeAttribute('style')
 }
 
 export namespace Random {
     export const
         between = (...[min, max]: Rangeof<number>) => Math.random() * (max - min) + min,
         numlist = (count: number, [min, max]: Rangeof<number>) =>
-            Array.from(Array(count), () => between(min, max)),
-
-        vector3 = (range: Vec3<Rangeof<number>> | Rangeof<number | Vector3>) => {
-            range = range instanceof Array ? range : Convert.asVector3(range) as Rangeof<Vector3>
-            return Vector3.FromArray(Range.isVector3(range) ? [
-                between(range[0].x, range[1].x),
-                between(range[0].y, range[1].y),
-                between(range[0].z, range[1].z)
-            ] : numlist(3, range as Rangeof<number>))
-        }
+            Array.from(Array(count), () => between(min, max))
 
     export namespace uniform {
-        export const
-            numlist = (count: number, range: Rangeof<number>) =>
-                Array(count).fill(between(...range)) as number[],
-            vector3 = (range: Rangeof<number>) => Vector3.FromArray(numlist(3, range))
+        export const numlist = (count: number, range: Rangeof<number>) =>
+            Array(count).fill(between(...range)) as number[]
     }
 }
 
 export namespace Vec3 {
-    export const isNumber = (vec: Vec3<any>): vec is Vec3<number> => Object.values(vec).every(t => typeof t === 'number')
-    export const isRangeofNumber = (vec: Vec3<any>): vec is Vec3<Rangeof<number>> => Object.values(vec).every(t => Range.isNumber(t))
+    export const
+        isNumber = (vec: Vec3<any>): vec is Vec3<number> => Object.values(vec).every(t => typeof t === 'number'),
+        isRangeofNumber = (vec: Vec3<any>): vec is Vec3<Rangeof<number>> => Object.values(vec).every(t => Range.isNumber(t))
 }
 
 export namespace Range {
     export const isNumber = (range: Rangeof<any>): range is Rangeof<number> => range.every(t => typeof t === 'number')
-    export const isVector3 = (range: Rangeof<any>): range is Rangeof<Vector3> => range.every(t => t instanceof Vector3)
 }
