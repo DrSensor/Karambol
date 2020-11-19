@@ -1,0 +1,37 @@
+@mixin color($text: white,
+    $primary : #4485bf,
+    $primary-variant: #506f8a,
+    $secondary : #76add4,
+    $accent : #bbcedc,
+) {
+    >button {
+        width        : 12em;
+        height       : 3em;
+        margin       : 5px;
+        border-radius: 6px;
+
+        transition      : 600ms background-color, 1s color;
+        background-color: $primary;
+        outline-color   : $accent;
+        color           : $text;
+
+        font-size  : medium;
+        font-weight: normal;
+
+        &:hover,
+        &:focus {
+            background-color: $primary-variant;
+            outline         : none;
+            font-weight     : bold;
+        }
+
+        &:active {
+            transition  : none;
+            border-width: 4px;
+            border-color: $primary-variant;
+
+            background-color: $secondary;
+            color           : $primary-variant;
+        }
+    }
+}

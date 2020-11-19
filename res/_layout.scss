@@ -1,0 +1,22 @@
+@mixin flex($layout, $direction, $reverse: false) {
+    display   : flex;
+    flex-wrap : nowrap;
+    overflow-y: auto;
+
+    @if $layout==center and $direction==vertical {
+        align-items    : center;
+        justify-content: center;
+
+        @if not $reverse {
+            flex-direction: column;
+        }
+
+        @else if $reverse==reverse or $reverse {
+            flex-direction: column-reverse;
+        }
+    }
+
+    @if $reverse !=reverse and $reverse !=true and $reverse !=false {
+        @error "flex(..., $reverse: #{$reverse}), $reverse must be `reverse \| true \| false`";
+    }
+}
