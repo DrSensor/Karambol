@@ -10,14 +10,17 @@ import '@babylonjs/core/Helpers/sceneHelpers'
 
 type Options = Partial<Readonly<
     & LifeCycleEventHandler
-    & { renderLoops: [() => void] }
+    & LifeCycleArgs
     & Level
+    & { renderLoops: RenderLoop[] }
 >>
 type Return = Readonly<
     & ThisWorld
     & LifeCycle
+    & Pick<SystemData, 'state'>
 >
 
+type RenderLoop = Parameters<Engine['runRenderLoop']>[0]
 type ThisSystem = System<SystemData>
 type ThisWorld = World<SystemData>
 
@@ -45,8 +48,8 @@ type LifeCycleArgs = Partial<{
 
 interface LifeCycle {
     start({ }?: LifeCycleArgs): Promise<void>
-    pause({ }?: LifeCycleArgs): Promise<void>
-    stop(): void
+    pause({ }?: Omit<LifeCycleArgs, 'cursor'>): Promise<void>
+    stop(): Promise<void>
 }
 
 export type { ThisSystem as System, ThisWorld as World }
@@ -57,14 +60,18 @@ export interface Level {
 
 export default ({
     onstart, onpause, onstop, onresume,
+    fullscreen: $fullscreen, cursor: $cursor,
     renderLoops, ...worldOpts
 }: Options = {}): Return => {
     let state: SystemData['state'] = 'stop',
-        wakelock: Partial<WakeLockSentinel>
+        wakelock: Partial<WakeLockSentinel>,
+        scene = {} as Data['scene']
 
-    const
-        world = createWorld<SystemData>(worldOpts),
-        engine = Object.assign(new Engine(canvas, true, {
+    const canNot = (currentState: typeof state) =>
+        Error(`game can't "${currentState}" from "${state}" state`)
+
+        , world = createWorld<SystemData>(worldOpts)
+        , engine = Object.assign(new Engine(canvas, true, {
             doNotHandleTouchAction: true,
             preserveDrawingBuffer: true,
             stencil: true,
@@ -73,14 +80,7 @@ export default ({
             limitDeviceRatio: window.devicePixelRatio,
         }, true), {
             canvasTabIndex: 0, // https://webaim.org/techniques/keyboard/tabindex
-        } as Engine),
-        scene = {
-            main: Object.assign(new Scene(engine), {
-                clearColor: Color4.FromColor3(Color3.Random(), Math.random()),
-                ambientColor: Color3.Random(),
-                fogColor: Color3.Random(),
-            } as Scene)
-        }
+        } as Engine)
 
     window.onresize = () => engine.resize()
     document.onvisibilitychange = async () => {
@@ -90,26 +90,29 @@ export default ({
                 wakelock ??= await navigator.wakeLock?.request('screen')
                 break
             case 'hidden':
-                game.pause()
+                if (state === 'playing') game.pause()
                 break
         }
     }
 
-    const
-        renderScenes = (unfreeze = true) => {
+    const frozenScenes = () => renderScenes(false)
+        , renderScenes = (unfreeze = true) => {
             if (unfreeze) world.tick({ // trigger all systems first
                 dt: engine.getDeltaTime(), state, scene,
             })
             engine.scenes.forEach(
                 scene => scene.render(unfreeze, !unfreeze))
-        },
-        frozenScenes = () => renderScenes(false),
-        canNot = (currentState: typeof state) =>
-            Error(`game can't "${currentState}" from "${state}" state`)
+        }
+        , disposeScenes = () => {
+            engine.scenes.forEach(scene => scene.dispose())
+            engine.wipeCaches(true)
+        }
 
     const game: LifeCycle = {
-        start: async ({ fullscreen = true, cursor = false } = {}) => {
+        start: async ({ fullscreen, cursor = false } = {}) => {
             if (!['pause', 'stop'].includes(state)) throw canNot('start')
+            fullscreen ??= $fullscreen ?? true
+            cursor ??= $cursor ?? false
 
             canvas.tabIndex = engine.canvasTabIndex; canvas.focus()
             if (!document.pointerLockElement && !cursor)
@@ -132,6 +135,13 @@ export default ({
                     break
                 case 'stop':
                     state = 'start'
+                    scene = {
+                        main: Object.assign(new Scene(engine), {
+                            clearColor: Color4.FromColor3(Color3.Random(), Math.random()),
+                            ambientColor: Color3.Random(),
+                            fogColor: Color3.Random(),
+                        } as Scene)
+                    }
                     if (onstart) onstart({ scene })
                     world.tick({ dt: engine.getDeltaTime(), state, scene })
                     Object.values(scene).forEach(stage => stage
@@ -145,24 +155,28 @@ export default ({
                 engine.runRenderLoop(renderer)
             state = 'playing'
         },
-        pause: async ({ fullscreen = false, cursor = true } = {}) => {
+        pause: async ({ fullscreen } = {}) => {
             if (state !== 'playing') throw canNot('pause')
             if (onpause) onpause({ scene })
+            fullscreen ??= $fullscreen ?? false
 
             canvas.removeAttribute('tabindex'); canvas.blur()
-            if (document.pointerLockElement && cursor) document.exitPointerLock()
+            if (document.pointerLockElement) document.exitPointerLock()
             if (document.fullscreenElement && !fullscreen) document.exitFullscreen()
             if (wakelock) {
                 engine.stopRenderLoop()
-                wakelock = await wakelock?.release()
+                wakelock = await wakelock?.release?.()
                 // video?.pause()
             }
             state = 'pause'
         },
-        stop: () => {
-            if (state !== 'playing') throw canNot('stop')
-            if (onstop) onstop({ scene }); document.exitPointerLock()
-            engine.stopRenderLoop(); wakelock?.release()
+        stop: async () => {
+            if (state !== 'pause') throw canNot('stop')
+            if (onstop) onstop({ scene })
+            document.exitPointerLock();
+            wakelock = await wakelock?.release?.()
+            engine.stopRenderLoop(); disposeScenes()
+            engine.clear(Color4.FromInts(0, 0, 0, 0), true, true, true)
             canvas.removeAttribute('tabindex'); canvas.blur()
             state = 'stop'; world.tick({
                 dt: engine.getDeltaTime(), state, scene
@@ -170,8 +184,10 @@ export default ({
         }
     }
 
-    // return Object.assign(world, lifecycle) // cuz there is no setter
-    return { ...world, ...game } // no polyfill cuz it target chrome83
+    // Object.assign(world, lifecycle) //🤔
+    return Object.defineProperties({ ...world, ...game }, {
+        state: { get: () => state }
+    })
 }
 
 type RequiredScene<T extends string> = { [K in T]: Scene }

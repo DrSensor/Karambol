@@ -1,3 +1,6 @@
+// https://flow.org/en/docs/types/utilities
+declare type Values<T> = T[keyof T]
+
 declare type DTO<T> = _DataPropertiesOnly<T>
 // https://stackoverflow.com/a/55480598/5221998
 type _DataPropertyNames<T> = {

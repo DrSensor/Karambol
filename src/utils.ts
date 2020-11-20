@@ -1,5 +1,6 @@
 import type { Observable } from 'sinuous/observable'
 export namespace Observable {
+    export type O<T> = Observable<T>
     export type Record<T extends {}> = { [O in keyof T]: Observable<T[O]> }
     export type RecordOf<T> = { [key: string]: Observable<T> }
     export type AsProxy<T extends Record<any>> = { [K in keyof T]: ReturnType<T[K]> }
@@ -21,8 +22,10 @@ export namespace Style {
                 else if (length > 2) swap(el[i], el[i + 1])
             }
         },
-        reset = (el: HTMLElement, style?: Inline) =>
-            style ? el.style[style] = null : el.removeAttribute('style')
+        reset = (style?: Inline, ...elements: AnyElement[]) => {
+            if (style) for (const el of elements) el.removeAttribute('style')
+            else for (const el of elements) el.style[style] = null
+        }
 }
 
 export namespace Random {

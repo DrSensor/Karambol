@@ -1,16 +1,17 @@
 import type { JSX } from 'sinuous'
-import type { Observable } from 'sinuous/observable'
+import type { Observable } from '~/src/utils'
 
 import menu from './index'
 
-type Props = { [key: string]: Observable<any> }
+type Props = Observable.RecordOf<any>
 
 type Element = JSX.Element | DocumentFragment
 type Component = (() => Element) | Element
+type O<C> = Observable.O<C>
 
 interface LifeCycle {
     view: Element
-    destroy(): Element
+    destroy(): void
 
     into<Args extends [], Self extends LifeCycle>(
         Menu: (...opts: Args) => Self,
@@ -21,7 +22,10 @@ interface LifeCycle {
 const
     lifecycle = (view: Element): LifeCycle => ({
         view,
-        destroy: () => view.parentNode.removeChild(view),
+        destroy: () => {
+            if (view.parentNode) view.parentNode.removeChild(view)
+            else while (menu.firstChild) menu.removeChild(menu.lastChild)
+        },
         into: (Menu, ...opts) => {
             const comp = Menu(...opts), parent = view.parentNode
             parent.append(comp.view)
