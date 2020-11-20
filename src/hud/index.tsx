@@ -5,9 +5,9 @@ import Score from './score'
 const HeadsUpDisplay = () => {
     const score = o(0)
 
-    hud.append(h([
+    hud.append(<>
         <Score value={score} x={90} y={90} scale={1.5} />
-    ]))
+    </>)
 
     return proxy({ score })
 }, hud = document.getElementById('hud') as

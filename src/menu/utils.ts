@@ -38,6 +38,9 @@ const
         return { ...lifecycle(view), ...props }
     }
 
+/** Handy JSX workaround for returning `h(null,{},OComponent())` */
+export const _ = null
+
 // import { memo } from 'memo' // TOOD: replace with fast-memoize
 // import { root } from 'sinuous/observable'
 // const // @ts-ignore

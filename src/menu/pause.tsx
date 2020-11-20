@@ -1,7 +1,7 @@
 import type { Component } from './utils'
 import { o, h } from 'sinuous'
 
-import { render, lifecycle } from './utils'
+import { render, lifecycle, _ } from './utils'
 
 interface EventListener {
     onexit(menu: ReturnType<typeof lifecycle>): void
@@ -9,20 +9,20 @@ interface EventListener {
 }
 
 export default ({ onexit, onresume }: EventListener) => {
-    const menu = () => lifecycle(h(null, null, Menu()))
+    const menu = () => lifecycle(<_>{Menu()}</_>)
         , destroy = (listener: Values<EventListener>) => {
-            listener(menu()); Menu(null)
+            listener(menu()); Menu(_)
         }
         , resume = () => destroy(onresume)
         , exit = () => destroy(onexit)
 
 
-    const Menu = o<Component>(null)
-        , Pause = () => h([
-            <button onClick={resume}>Resume</button>,
-            <button onClick={exit}>Exit</button>,
-        ])
-        , View = () => { Menu(Pause); return h([Menu]) }
+    const Menu = o<Component>(_)
+        , Pause = () => <>
+            <button onClick={resume}>Resume</button>
+            <button onClick={exit}>Exit</button>
+        </>
+        , View = () => { Menu(Pause); return <>{Menu}</> }
 
 
     return render(View())
