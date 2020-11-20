@@ -1,5 +1,12 @@
+import type { Scene } from '@babylonjs/core'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import * as Util from '~/src/utils'
+
+export namespace Scene {
+    export type Collection<T extends string = string> = { [K in T]: Scene }
+    export type Required<T extends string> = Scene.Collection<T>
+    export type Optional<T extends string> = Partial<Scene.Required<T>>
+}
 
 export namespace Convert {
     const { assign } = Object

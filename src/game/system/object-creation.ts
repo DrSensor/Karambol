@@ -30,14 +30,14 @@ export namespace Obstacle {
                 world.removeSystem(system); break
             case 'start':
                 const origin = MeshBuilder.CreateBox('box', { size }, main)
-                onorigin?.call(null, origin); meshes.push(origin)
+                onorigin?.(origin); meshes.push(origin)
 
                 for (const i of Array(count - 1)) {
                     const instance = Object.assign(origin.createInstance('box'), {
                         position: Random.vector3(position),
                         scaling: Random.uniform.vector3(scale),
                     } as InstancedMesh)
-                    oninstance?.call(null, instance); meshes.push(instance)
+                    oninstance?.(instance); meshes.push(instance)
                 }; break
         }
     }

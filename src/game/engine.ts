@@ -1,44 +1,43 @@
 import type { World, System, ComponentType } from '@javelin/ecs'
+import type { Scene } from './utils'
 
 import canvas from './index'
 import { createWorld } from '@javelin/ecs'
 
 import { Engine } from '@babylonjs/core/Engines/engine'
 import { Color4, Color3 } from '@babylonjs/core/Maths/math'
-import { Scene } from '@babylonjs/core/scene'
+import { Scene as Stage } from '@babylonjs/core/scene'
 import '@babylonjs/core/Helpers/sceneHelpers'
 
-type Options = Partial<Readonly<
-    & LifeCycleEventHandler
+type Options<T extends Scene.Collection> = Partial<Readonly<
+    & LifeCycleEventHandler<T>
     & LifeCycleArgs
-    & Level
+    & Level<T>
     & { renderLoops: RenderLoop[] }
 >>
 type Return = Readonly<
     & ThisWorld
     & LifeCycle
-    & Pick<SystemData, 'state'>
+    & Pick<SysData, 'state'>
 >
 
 type RenderLoop = Parameters<Engine['runRenderLoop']>[0]
-type ThisSystem = System<SystemData>
-type ThisWorld = World<SystemData>
+type ThisSystem<T extends Scene.Collection> = System<SysData & Data<T>>
+type ThisWorld = World<SysData>
 
-interface Data {
-    readonly scene:
-    & RequiredScene<'main'>
-    // & OptionalScene<'map' | 'zoom'>
-    // & OptionalScene<'nogravity'>
+interface Data<Scene extends Scene.Collection> {
+    readonly scene: Scene
+    // reserved for other props
 }
 
-interface SystemData extends Data {
+interface SysData {
     /** delta time on each world update */
     readonly dt: number
     readonly state: 'start' | 'resume' | 'playing' | 'pause' | 'stop'
 }
 
-type LifeCycleEventHandler = Omit<{
-    readonly [K in `on${SystemData['state']}`]: ({ }: Data) => Void
+type LifeCycleEventHandler<T extends Scene.Collection> = Omit<{
+    readonly [K in `on${SysData['state']}`]: ({ }: Data<T>) => Void
 }, 'onplaying'>
 
 type LifeCycleArgs = Partial<{
@@ -53,24 +52,24 @@ interface LifeCycle {
 }
 
 export type { ThisSystem as System, ThisWorld as World }
-export interface Level {
-    systems?: ThisSystem[]
+export interface Level<T extends Scene.Collection> {
+    systems?: ThisSystem<T>[]
     componentTypes?: ComponentType[]
 }
 
-export default ({
+export default <Scene extends Scene.Required<'main'>>({
     onstart, onpause, onstop, onresume,
     fullscreen: $fullscreen, cursor: $cursor,
     renderLoops, ...worldOpts
-}: Options = {}): Return => {
-    let state: SystemData['state'] = 'stop',
+}: Options<Scene> = {}): Return => {
+    let state: SysData['state'] = 'stop',
         wakelock: Partial<WakeLockSentinel>,
-        scene = {} as Data['scene']
+        scene = {} as Scene
 
     const canNot = (currentState: typeof state) =>
         Error(`game can't "${currentState}" from "${state}" state`)
 
-        , world = createWorld<SystemData>(worldOpts)
+        , world = createWorld<SysData & Data<Scene>>(worldOpts)
         , engine = Object.assign(new Engine(canvas, true, {
             doNotHandleTouchAction: true,
             preserveDrawingBuffer: true,
@@ -109,7 +108,7 @@ export default ({
         }
 
     const game: LifeCycle = {
-        start: async ({ fullscreen, cursor = false } = {}) => {
+        start: async ({ fullscreen, cursor } = {}) => {
             if (!['pause', 'stop'].includes(state)) throw canNot('start')
             fullscreen ??= $fullscreen ?? true
             cursor ??= $cursor ?? false
@@ -136,12 +135,12 @@ export default ({
                 case 'stop':
                     state = 'start'
                     scene = {
-                        main: Object.assign(new Scene(engine), {
+                        main: Object.assign(new Stage(engine), {
                             clearColor: Color4.FromColor3(Color3.Random(), Math.random()),
                             ambientColor: Color3.Random(),
                             fogColor: Color3.Random(),
-                        } as Scene)
-                    }
+                        } as Stage)
+                    } as Scene
                     if (onstart) onstart({ scene })
                     world.tick({ dt: engine.getDeltaTime(), state, scene })
                     Object.values(scene).forEach(stage => stage
@@ -189,7 +188,3 @@ export default ({
         state: { get: () => state }
     })
 }
-
-type RequiredScene<T extends string> = { [K in T]: Scene }
-type OptionalScene<T extends string> = Partial<RequiredScene<T>>
-type Void = void | Promise<void>

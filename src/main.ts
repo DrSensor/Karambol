@@ -50,8 +50,8 @@ const zIndexReset = () => Style.reset('zIndex', menu, canvas, hud)
             { key }: KeyboardEvent) {
             if (!['Enter', 'Escape'].includes(key)) return
             switch (game.state) {
-                case 'playing': return game.pause({ fullscreen: true })
-                case 'pause': return game.start()
+                case 'playing': return game.pause()
+                case 'pause': return game.start({ fullscreen: false })
             }
         }
     }

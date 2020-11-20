@@ -10,6 +10,7 @@ type _DataPropertiesOnly<T> = {
     [P in _DataPropertyNames<T>]: T[P] extends object ? DTO<T[P]> : T[P]
 }
 
+type Void = void | Promise<void>
 type Rangeof<T> = [T, T]
 type Vec2<T> = { x: T, y: T }
 type Vec3<T> = Vec2<T> & { z: T }
