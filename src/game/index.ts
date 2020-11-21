@@ -1,5 +1,5 @@
 const canvas = document.getElementById('viewport') as HTMLCanvasElement
-export default canvas
 
+export default canvas
 export * as Level from './level'
-export { default as game } from './engine'
+export { default as Game } from './engine'

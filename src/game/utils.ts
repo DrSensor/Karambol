@@ -10,11 +10,11 @@ export namespace Scene {
 
 export namespace Convert {
     const { assign } = Object
-    export const asVector3 = ({ x, y, z }: Vec3<number | Rangeof<number>>): Vector3 | Rangeof<Vector3> =>
-        Vec3.isRangeofNumber({ x, y, z }) ? [
-            new Vector3(x[0], y[0], z[0]),
-            new Vector3(x[1], y[1], z[1])
-        ] : assign(new Vector3(), { x, y, z })
+    export const asVector3 = (vec: Vec3<number | Rangeof<number>>): Vector3 | Rangeof<Vector3> =>
+        Vec3.isRangeofNumber(vec) ? [
+            new Vector3(vec.x[0], vec.y[0], vec.z[0]),
+            new Vector3(vec.x[1], vec.y[1], vec.z[1])
+        ] : assign(new Vector3(), vec)
 }
 
 export namespace Random {

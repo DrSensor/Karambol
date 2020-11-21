@@ -12,19 +12,28 @@ export namespace Style {
 
     export const
         swap = (style: Inline, ...elements: AnyElement[]) => {
-            const swap = (el1: AnyElement, el2: AnyElement) => {
-                const tmp = getComputedStyle(el1)[style]
-                el1.style[style] = getComputedStyle(el2)[style]
-                el2.style[style] = tmp
-            }; for (const i of elements.keys()) {
-                const { length } = elements, el = elements
+            const el = elements, { length } = elements
+                , swap = (el1: AnyElement, el2: AnyElement) => {
+                    const tmp = getComputedStyle(el1)[style]
+                    el1.style[style] = getComputedStyle(el2)[style]
+                    el2.style[style] = tmp
+                }
+
+            if (length == 2) swap(el[0], el[1])
+            else for (const i of elements.keys()) {
                 if (i == length - 1) /*swap(el[i], el[0])*/break // don't rotate
-                else if (length > 2) swap(el[i], el[i + 1])
+                else swap(el[i], el[i + 1])
             }
         },
-        reset = (style?: Inline, ...elements: AnyElement[]) => {
-            if (style) for (const el of elements) el.removeAttribute('style')
-            else for (const el of elements) el.style[style] = null
+        reset = (styles?: Inline | Inline[], ...elements: AnyElement[]) => {
+            if (styles) Style.set(styles, '', ...elements)
+            else for (const el of elements) el.removeAttribute('style')
+        },
+        set = (styles: Inline | Inline[], value: string, ...elements: AnyElement[]) => {
+            for (const el of elements)
+                if (Array.isArray(styles)) for (const style of styles)
+                    el.style[style] = value
+                else el.style[styles] = value
         }
 }
 

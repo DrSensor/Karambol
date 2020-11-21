@@ -15,6 +15,7 @@
         "d3-fetch": "^2.0.0",
         "device-detector-js": "^2.2.5",
         "goober": "^2.0.15",
+        "lodash": "^4.17.20",
         "sinuous": "^0.27.11"
     },
     "devDependencies": {
@@ -23,8 +24,10 @@
         "@snowpack/plugin-sass": "^1.1.1",
         "@types/d3-fetch": "^2.0.0",
         "@types/dom-screen-wake-lock": "^1.0.0",
+        "@types/lodash": "^4.14.165",
         "@types/react": "^16.9.56",
         "@types/react-dom": "^16.9.9",
+        "@types/webxr": "^0.1.0",
         "csstype": "^2.6.14",
         "degit": "^2.8.0",
         "mkcert": "^1.4.0",

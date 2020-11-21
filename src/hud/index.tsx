@@ -1,19 +1,20 @@
 import { o, hs as h } from 'sinuous'
-import { proxyWithObservable as proxy } from './utils'
+import { proxyWithObservable as proxy, lifecycle } from './utils'
 import Score from './score'
+
+const root = document.getElementById('hud') as Element as SVGElement
 
 const HeadsUpDisplay = () => {
     const score = o(0)
 
-    hud.append(<>
+    root.append(<>
         <Score value={score} x={90} y={90} scale={1.5} />
     </>)
 
-    return proxy({ score })
-}, hud = document.getElementById('hud') as
-    Element as SVGElement
+    return Object.create(proxy({ score }), lifecycle)
+}
 
 export {
-    hud as default, HeadsUpDisplay,
+    root as default, HeadsUpDisplay,
     HeadsUpDisplay as HUD
 }

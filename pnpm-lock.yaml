@@ -6,6 +6,7 @@ dependencies:
   d3-fetch: 2.0.0
   device-detector-js: 2.2.5
   goober: 2.0.15_csstype@2.6.14
+  lodash: 4.17.20
   sinuous: 0.27.11
 devDependencies:
   '@snowpack/plugin-dotenv': 2.0.4
@@ -13,8 +14,10 @@ devDependencies:
   '@snowpack/plugin-sass': 1.1.1
   '@types/d3-fetch': 2.0.0
   '@types/dom-screen-wake-lock': 1.0.0
+  '@types/lodash': 4.14.165
   '@types/react': 16.9.56
   '@types/react-dom': 16.9.9
+  '@types/webxr': 0.1.0
   csstype: 2.6.14
   degit: 2.8.0
   mkcert: 1.4.0
@@ -260,6 +263,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-jnqIUKDUqJbDIUxm0Uj7bnlMnRm1T/eZ9N+AVMqhPgzrba2GhGG5o/jCTwmdPK709nEZsGoMzXEDUjcXHa3W0g==
+  /@types/lodash/4.14.165:
+    dev: true
+    resolution:
+      integrity: sha512-tjSSOTHhI5mCHTy/OOXYIhi2Wt1qcbHmuXD1Ha7q70CgI/I71afO4XtLb/cVexki1oVYchpul/TOuu3Arcdxrg==
   /@types/node/14.14.7:
     dev: true
     resolution:
@@ -291,6 +298,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==
+  /@types/webxr/0.1.0:
+    dev: true
+    resolution:
+      integrity: sha512-Hb7qwTIeTgFhTSX3TkSaMh3R4B+jrlWHAEKU44JULdb3ha5UNZXZ/0I9omFncBDwzd6sta1Z3cxf18REwRvveQ==
   /address/1.1.2:
     dev: true
     engines:
@@ -1111,6 +1122,10 @@ packages:
       node: '>=10'
     resolution:
       integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==
+  /lodash/4.17.20:
+    dev: false
+    resolution:
+      integrity: sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
   /lower-case/1.1.4:
     dev: true
     resolution:
@@ -1893,14 +1908,17 @@ specifiers:
   '@snowpack/plugin-sass': ^1.1.1
   '@types/d3-fetch': ^2.0.0
   '@types/dom-screen-wake-lock': ^1.0.0
+  '@types/lodash': ^4.14.165
   '@types/react': ^16.9.56
   '@types/react-dom': ^16.9.9
+  '@types/webxr': ^0.1.0
   ammojs: 'link:vendor/ammojs'
   csstype: ^2.6.14
   d3-fetch: ^2.0.0
   degit: ^2.8.0
   device-detector-js: ^2.2.5
   goober: ^2.0.15
+  lodash: ^4.17.20
   mkcert: ^1.4.0
   sinuous: ^0.27.11
   snowpack: ^2.17.1

@@ -1,8 +1,6 @@
 import type { Record } from './utils'
 import { o, h } from 'sinuous'
 
-import { styled, css } from 'goober'
-
 type Dimension = { x: number, y: number, scale: number }
 type Score = { value: number }
 type Props =

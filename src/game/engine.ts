@@ -12,18 +12,18 @@ import '@babylonjs/core/Helpers/sceneHelpers'
 type Options<T extends Scene.Collection> = Partial<Readonly<
     & LifeCycleEventHandler<T>
     & LifeCycleArgs
-    & Level<T>
+    & WorldOptions<T>
     & { renderLoops: RenderLoop[] }
 >>
-type Return = Readonly<
-    & ThisWorld
+type Return<T extends Scene.Collection> = Readonly<
+    & ThisWorld<T>
     & LifeCycle
     & Pick<SysData, 'state'>
 >
 
 type RenderLoop = Parameters<Engine['runRenderLoop']>[0]
 type ThisSystem<T extends Scene.Collection> = System<SysData & Data<T>>
-type ThisWorld = World<SysData>
+type ThisWorld<T extends Scene.Collection> = World<SysData & Data<T>>
 
 interface Data<Scene extends Scene.Collection> {
     readonly scene: Scene
@@ -46,24 +46,30 @@ type LifeCycleArgs = Partial<{
 }>
 
 interface LifeCycle {
-    start({ }?: LifeCycleArgs): Promise<void>
-    pause({ }?: Omit<LifeCycleArgs, 'cursor'>): Promise<void>
+    start(_?: LifeCycleArgs): Promise<void>
+    pause(_?: Omit<LifeCycleArgs, 'cursor'>): Promise<void>
     stop(): Promise<void>
 }
 
-export type { ThisSystem as System, ThisWorld as World }
-export interface Level<T extends Scene.Collection> {
+interface WorldOptions<T extends Scene.Collection> {
     systems?: ThisSystem<T>[]
     componentTypes?: ComponentType[]
 }
 
-export default <Scene extends Scene.Required<'main'>>({
+export namespace Default {
+    export type Scene = Scene.Required<'main'>
+    export type System = ThisSystem<Default.Scene>
+    export type Level = WorldOptions<Default.Scene>
+}
+export type { ThisSystem as System, ThisWorld as World, WorldOptions as Level }
+
+export default <Scene extends Default.Scene>({
     onstart, onpause, onstop, onresume,
     fullscreen: $fullscreen, cursor: $cursor,
     renderLoops, ...worldOpts
-}: Options<Scene> = {}): Return => {
+}: Options<Scene> = {}): Return<Scene> => {
     let state: SysData['state'] = 'stop',
-        wakelock: Partial<WakeLockSentinel>,
+        wakelock: Partial<WakeLockSentinel> | undefined,
         scene = {} as Scene
 
     const canNot = (currentState: typeof state) =>

@@ -1,12 +1,10 @@
 import type { InstancedMesh, Mesh, Vector3 } from '@babylonjs/core'
-import type { System as S } from '../engine'
+import type { Default } from '../engine'
 
 import { Random } from '../utils'
 import { BoxBuilder as MeshBuilder } from '@babylonjs/core/Meshes/Builders/boxBuilder'
 
 export namespace Obstacle {
-    export const meshes: (Mesh | InstancedMesh)[] = []
-
     interface EventHandler {
         onorigin?(mesh: Mesh): void
         oninstance?(mesh: InstancedMesh): void
@@ -17,8 +15,11 @@ export namespace Obstacle {
     }
     type RandomCubes = RandomMeshes & { size?: number, scale?: Rangeof<number> }
 
-    export const randomCube = (props: RandomCubes): S => function system(
-        world, { state, scene: { main } }) {
+    export const meshes: (Mesh | InstancedMesh)[] = []
+
+    export const randomCube = (props: RandomCubes): Default.System => function system(
+        world, { state, scene: { main } }
+    ) {
         const { onorigin, oninstance
             , count = 1, size
             , position = [0, 0]
@@ -26,7 +27,7 @@ export namespace Obstacle {
         } = props
         switch (state) {
             case 'stop':
-                while (meshes.length > 0) meshes.pop().dispose()
+                while (meshes.length > 0) meshes.pop()!.dispose()
                 world.removeSystem(system); break
             case 'start':
                 const origin = MeshBuilder.CreateBox('box', { size }, main)

@@ -10,13 +10,13 @@ csv(arcoreDevices).then(data => {
         { device } = detector.parse(navigator.userAgent)
 
     if (
-        device.type === 'desktop'
+        device?.type === 'desktop'
     ) globalThis.platform = Platform.Desktop
 
     else if ( // TODO: compare UA with arcore_devicelist.csv
         navigator.xr?.isSessionSupported('immersive-ar')
         && data.some(
-            row => device.model.includes(row['Model Name']))
+            row => device?.model.includes(row['Model Name']!))
     ) globalThis.platform = Platform.AR
 
     else if (
@@ -24,7 +24,7 @@ csv(arcoreDevices).then(data => {
     ) globalThis.platform = Platform.VR
 
     else if ( // TODO: rather than orientation, use resolution or device pixel ration
-        device.type === 'mobile'
+        device?.type === 'mobile'
         || window.ondeviceorientation
         && window.ondevicemotion
         && window.ontouchstart
@@ -38,13 +38,4 @@ export const enum Platform { AR, VR, Mobile, Desktop, Unknown }
 
 declare global {
     var platform: Platform
-
-    interface Navigator { // shim
-        xr?: {
-            isSessionSupported(mode: XRSessionMode): boolean
-            requestSession(sessionMode, sessionInit): Promise<unknown>
-            addEventListener(event: 'devicechange', listener: (ev: Event) => void)
-            ondevicechange: (ev: Event) => void
-        }
-    }
 }

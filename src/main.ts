@@ -1,59 +1,36 @@
-import canvas, { game as init, Level } from './game'
-import menu, { MainMenu, PauseMenu } from './menu'
-import hud, { HUD } from './hud'
+import { Game, Level } from './game'
+import { Menu } from './menu'
+import { HUD } from './hud'
 
-import { Style } from './utils'
+const game = Game({
+    fullscreen: false,
+    cursor: true,
 
-// globalThis.platform must be accessed on func/callback/listener
-// console.log(globalThis.platform) // undefined
+    onstart: () => console.debug('game start'),
+    onresume: () => console.debug('game resume'),
+    onpause: () => console.debug('game pause'),
+    onstop: () => console.debug('game stop'),
+})
 
-// TODO(user inactive): use requestIdleCallback to hide PauseMenu while dim the screen
-// TODO(user active): diplay PauseMenu in menu.onhover
-// TODO: replace requestIdleCallback with IdleDetector when landed
-// https://www.chromestatus.com/feature/4590256452009984
-let pause: ReturnType<typeof PauseMenu>
-const zIndexReset = () => Style.reset('zIndex', menu, canvas, hud)
-    , zIndexSwap = () => Style.swap('zIndex', menu, canvas, hud)
-    , game = init({
-        fullscreen: true, cursor: true,
-        onstart: zIndexSwap,
-        onresume() { pause.destroy(); zIndexSwap() },
-        onpause() { pause = gmenu.pause() },
-        onstop() { gmenu.main() }
-    })
-    , gmenu = {
-        pause: () => {
-            zIndexReset()
-            return PauseMenu({
-                onresume() { game.start() },
-                onexit() { game.stop() }
-            })
-        },
-        main: () => {
-            zIndexReset()
-            document.removeEventListener('keydown', handleKey.pause)
-            return MainMenu({
-                onstart({ view }) {
-                    // const {score} = HUD().observable
-                    // score(100)
-                    const display = HUD()
-                    display.score = 100
+let display: ReturnType<typeof HUD>
 
-                    Level.sandbox(game).start()
-                    document.addEventListener('keydown', handleKey.pause)
-                }
-            })
-        }
-    }
-    , handleKey = {
-        pause(this: { pause: ReturnType<typeof PauseMenu> },
-            { key }: KeyboardEvent) {
-            if (!['Enter', 'Escape'].includes(key)) return
-            switch (game.state) {
-                case 'playing': return game.pause()
-                case 'pause': return game.start({ fullscreen: false })
-            }
-        }
-    }
+Menu({
+    hotkey: {
+        pause: ['Escape', 'Enter']
+    },
 
-gmenu.main()
+    onstart() {
+        // TODO: use Topic to update hud display inside game.system
+        display = HUD()
+        display.score = 100
+        Level.sandbox(game).start()
+    },
+
+    onresume: () => game.start(),
+    onpause: () => game.pause(),
+
+    onexit() {
+        display.destroy()
+        game.stop()
+    },
+})

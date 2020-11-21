@@ -1,7 +1,7 @@
-import type { Level, default as game } from '../engine'
+import type { Default, default as game } from '../engine'
 import { Obstacle } from '../system'
 
-const sandbox: Level = {
+const sandbox: Default.Level = {
     systems: [
         Obstacle.randomCube({
             count: 100, size: 15,
@@ -20,6 +20,6 @@ const sandbox: Level = {
 }
 
 export default (world: ReturnType<typeof game>) => {
-    for (const system of sandbox.systems) world.addSystem(system)
+    for (const system of sandbox.systems!) world.addSystem(system)
     return world
 }
