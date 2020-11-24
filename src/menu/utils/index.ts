@@ -1,7 +1,7 @@
 import type { JSX } from 'sinuous'
 import type { Observable } from '~/src/utils'
 
-import root from './index'
+import root from '../index'
 
 type Props = Observable.RecordOf<any>
 
@@ -41,9 +41,6 @@ const
 /** For use with event attribute like `onclick` */
 export const transition = <C = Component>(comp: C, o: O<C>) => () => o(comp)
 
-/** Handy JSX workaround for constructing `h(null,{},OComponent())` */
-export const _ = null as unknown as () => Element
-
 // import { memo } from 'memo' // TOOD: replace with fast-memoize
 // import { root } from 'sinuous/observable'
 // const // @ts-ignore
@@ -51,5 +48,7 @@ export const _ = null as unknown as () => Element
 //     dynamic = comp => (props, ...children) => () => memoComp(comp())(props, children)
 
 export type { Component, Observable, JSX }
-export { lifecycle, render, /* dynamic */ }
+export { lifecycle, render /*, dynamic */ }
+export { library as iconset, dom as domicon } from '@fortawesome/fontawesome-svg-core'
 export { Style } from '~/src/utils'
+export { _ } from './components'

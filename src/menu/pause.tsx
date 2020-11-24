@@ -7,8 +7,17 @@ import type { Component } from './utils'
 import { o, h } from 'sinuous'
 
 import root from './index'
-import { Style, lifecycle, _ } from './utils'
+import { Style, lifecycle } from './utils'
 import intersect from 'lodash/intersection'
+
+import { Icon, _ } from './utils/components'
+import {
+    faPlayCircle as btnPlay,
+    faPause as icoPause,
+    faPauseCircle as btnPause,
+    faSignOutAlt as icoExit,
+} from '@fortawesome/free-solid-svg-icons'
+// import { faPlayCircle as faPlay } from '@fortawesome/free-regular-svg-icons'
 
 type Event = 'pause' | 'exit' | 'resume'
 
@@ -44,11 +53,8 @@ export const Menu = ({
         },
         listenKey = (listen: boolean) => {
             const event = 'keydown'
-                , call = listen ? 'add' : 'remove'
-                // @ts-expect-error
-                , eventListener = (ev, handler) => document[
-                    `${call}EventListener`](ev, handler)
-            eventListener(event, keytoggle)
+            if (listen) document.addEventListener(event, keytoggle)
+            else document.removeEventListener(event, keytoggle)
         },
 
         style = {
@@ -76,13 +82,21 @@ export const Menu = ({
 
     listenKey(true)
     const // component
-        Toggler = () => <>
-            <button style="pointer-events: auto" onClick={pause}>Pause</button>
-        </>,
+        Toggler = () =>
+            <button onClick={pause} name="pause" class="indicator">
+                <Icon def={btnPause} />
+            </button>,
 
         Menu = () => <>
-            <button onClick={resume}>Resume</button>
-            <button onClick={exit}>Exit</button>
+            <Icon def={icoPause} class='indicator' />
+
+            {/* Menu Buttons */}
+            <button onClick={resume} name="resume" class="fab">
+                <Icon def={btnPlay} />
+            </button>
+            <button onClick={exit} name="exit">
+                Exit <Icon def={icoExit} />
+            </button>
         </>,
 
         View = o<Component>(hidden ? Toggler : Menu)

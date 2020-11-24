@@ -1,21 +1,86 @@
-@mixin color($text: white,
-    $primary : #4485bf,
-    $primary-variant: #506f8a,
-    $secondary : #76add4,
-    $accent : #bbcedc,
+@use 'utils'as *;
+
+@mixin config($pointer-events: unset) {
+
+    >button,
+    >.button,
+    >.fab {
+        pointer-events: $pointer-events;
+    }
+}
+
+@mixin color($text,
+    $primary: var(--primary),
+    $primary-variant: var(--primary-variant),
+    $secondary: var(--secondary),
+    $accent: var(--accent),
 ) {
-    >button {
-        width        : 12em;
-        height       : 3em;
+    $size : 3;
+    $delta: 600ms;
+
+    %placement {
+        height       : $size * 1em;
         margin       : 5px;
         border-radius: 6px;
+    }
 
-        transition      : 600ms background-color, 1s color;
+    // >button:has(>svg:only-child),
+    >button.fab {
+        width     : $size * 1em;
+        appearance: none;
+        padding   : 0;
+        margin    : 0;
+        border    : none;
+        outline   : none;
+
+        >svg:only-child {
+            width : inherit;
+            height: inherit;
+        }
+    }
+
+    // >button:has(>svg:only-child),
+    >svg.button,
+    >button.fab {
+        @extend %placement;
+
+        color        : $primary;
+        background   : $accent;
+        border-radius: 100%;
+        filter       : drop-shadow(tup-2(0px) 3px $accent);
+        font-size    : $size * 4pt;
+
+        &:hover,
+        &:focus {
+            color    : $primary-variant;
+            filter   : drop-shadow(tup-2(2px) 10px $accent);
+            font-size: $size * 4.2pt;
+        }
+
+        transition: $delta color,
+        $delta font-size,
+        $delta/2 filter;
+
+        &:active {
+            transition: none;
+
+            color    : $secondary;
+            filter   : drop-shadow(tup-2(2px) 10px $primary-variant);
+            font-size: $size * 4pt;
+        }
+    }
+
+    // >button:not(:has(>svg:only-child)),
+    >button:not(.fab):not(.indicator),
+    >.button:not(svg) {
+        width: $size * 4em;
+        @extend %placement;
+
         background-color: $primary;
         outline-color   : $accent;
         color           : $text;
 
-        font-size  : medium;
+        font-size  : $size * 4pt;
         font-weight: normal;
 
         &:hover,
@@ -25,8 +90,12 @@
             font-weight     : bold;
         }
 
+        transition: $delta background-color,
+        $delta*2 color;
+
         &:active {
-            transition  : none;
+            transition: none;
+
             border-width: 4px;
             border-color: $primary-variant;
 

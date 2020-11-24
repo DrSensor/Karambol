@@ -18,7 +18,9 @@
         "jsx": "preserve",
         "jsxFactory": "h",
         "jsxFragmentFactory": "Array.prototype",
-        "strict": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "noEmit": true

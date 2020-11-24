@@ -1,0 +1,7 @@
+@function tup-2($val) {
+    @return $val $val
+}
+
+@function tup-3($val) {
+    @return $val $val $val
+}

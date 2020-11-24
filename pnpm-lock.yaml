@@ -1,6 +1,9 @@
 dependencies:
   '@babylonjs/core': 4.2.0
   '@babylonjs/inspector': 4.2.0_df6b84a1683bd51ac3913bd45faf76b7
+  '@fortawesome/fontawesome-svg-core': 1.2.32
+  '@fortawesome/free-regular-svg-icons': 5.15.1
+  '@fortawesome/free-solid-svg-icons': 5.15.1
   '@javelin/ecs': 0.19.2
   ammojs: 'link:vendor/ammojs'
   d3-fetch: 2.0.0
@@ -101,6 +104,40 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Ce3xE2JvTSEbASFbRbA1gAIcMcZWdS2yUYRaQbeM0nbOzaZrUYfa3ePtcriYRZOZmr+CkKA+zbjhvTpIOAYVcw==
+  /@fortawesome/fontawesome-common-types/0.2.32:
+    dev: false
+    engines:
+      node: '>=6'
+    requiresBuild: true
+    resolution:
+      integrity: sha512-ux2EDjKMpcdHBVLi/eWZynnPxs0BtFVXJkgHIxXRl+9ZFaHPvYamAfCzeeQFqHRjuJtX90wVnMRaMQAAlctz3w==
+  /@fortawesome/fontawesome-svg-core/1.2.32:
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 0.2.32
+    dev: false
+    engines:
+      node: '>=6'
+    requiresBuild: true
+    resolution:
+      integrity: sha512-XjqyeLCsR/c/usUpdWcOdVtWFVjPbDFBTQkn2fQRrWhhUoxriQohO2RWDxLyUM8XpD+Zzg5xwJ8gqTYGDLeGaQ==
+  /@fortawesome/free-regular-svg-icons/5.15.1:
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 0.2.32
+    dev: false
+    engines:
+      node: '>=6'
+    requiresBuild: true
+    resolution:
+      integrity: sha512-eD9NWFy89e7SVVtrLedJUxIpCBGhd4x7s7dhesokjyo1Tw62daqN5UcuAGu1NrepLLq1IeAYUVfWwnOjZ/j3HA==
+  /@fortawesome/free-solid-svg-icons/5.15.1:
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 0.2.32
+    dev: false
+    engines:
+      node: '>=6'
+    requiresBuild: true
+    resolution:
+      integrity: sha512-EFMuKtzRMNbvjab/SvJBaOOpaqJfdSap/Nl6hst7CgrJxwfORR1drdTV6q1Ib/JVzq4xObdTDcT6sqTaXMqfdg==
   /@javelin/ecs/0.19.2:
     dev: false
     resolution:
@@ -1902,6 +1939,9 @@ packages:
 specifiers:
   '@babylonjs/core': ^4.2.0
   '@babylonjs/inspector': ^4.2.0
+  '@fortawesome/fontawesome-svg-core': ^1.2.32
+  '@fortawesome/free-regular-svg-icons': ^5.15.1
+  '@fortawesome/free-solid-svg-icons': ^5.15.1
   '@javelin/ecs': ^0.19.2
   '@snowpack/plugin-dotenv': ^2.0.4
   '@snowpack/plugin-optimize': ^0.2.9

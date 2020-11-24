@@ -4,6 +4,7 @@ module.exports = {
     devOptions: {
         open: BROWSER ? ".scripts/browser.sh" : "none",
         secure: true,
+        hmr: true, // WARNING: hot-reloading many times will cause memory leak, make sure to close then reopen the tab
     },
     alias: { "~": "." },
     // install: ["memo", "sinuous/observable"],

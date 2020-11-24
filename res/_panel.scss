@@ -1,0 +1,98 @@
+/// Naming and functionality are inspired from xfce4-panel
+/// @see https://askubuntu.com/questions/1119638/what-is-the-difference-between-notification-area-systray-indicator-plugin
+@use 'utils'as *;
+
+$size : 3;
+$delta: 600ms;
+$x    : 2em;
+$y    : 2em;
+
+%panel {
+    position: fixed;
+    top     : $y;
+
+    margin       : 5px;
+    border-radius: 6px;
+}
+
+/// Status that are persistent to indicate something happen.
+@mixin indicator($accent: var(--accent),
+    $primary: var(--primary),
+    $primary-variant: var(--primary-variant),
+    $secondary: var(--secondary),
+) {
+    %button {
+        $size: $size * 3pt;
+
+        left     : $x/2;
+        top      : $y/2;
+        font-size: $size;
+        filter   : drop-shadow(tup-2(1px) 5px $accent);
+        color    : $primary;
+
+        &:hover,
+        &:focus {
+            color    : $primary-variant;
+            filter   : drop-shadow(tup-2(-2px) 10px $accent);
+            font-size: $size * 1.05;
+        }
+
+
+        transition: $delta color,
+        $delta font-size,
+        $delta/2 filter;
+
+        &:active {
+            transition: none;
+
+            color    : $secondary;
+            filter   : drop-shadow(tup-2(-1px) 10px $primary-variant);
+            font-size: $size;
+        }
+    }
+
+    >.indicator {
+        @extend %panel;
+        height: $size * 1em;
+
+        color    : $secondary;
+        filter   : drop-shadow(tup-2(0px) 3px $accent);
+        font-size: $size * 2pt;
+        left     : $x;
+    }
+
+    >button.indicator {
+        @extend %button;
+        width     : $size * 1em;
+        appearance: none;
+        padding   : 0;
+        margin    : 0;
+        border    : none;
+        outline   : none;
+
+        border-radius: 100%;
+
+        >svg:only-child {
+            width : inherit;
+            height: inherit;
+        }
+    }
+
+    >svg.indicator.button {
+        @extend %button;
+    }
+}
+
+/// Status that can suddenly appear to notify the player.
+/// @todo WIP
+@mixin notification {
+    >svg.notification {
+        right: 1em;
+
+        @extend %panel;
+        height   : $size * 1.2em;
+        font-size: $size * 2.5pt;
+
+        filter: drop-shadow(tup-2(0px) 2.2px $shadow);
+    }
+}

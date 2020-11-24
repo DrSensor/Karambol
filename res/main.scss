@@ -2,6 +2,7 @@
 // WARNING: change in `_*.scss` file doesn't trigger HotReload when using `@import`
 @use 'button';
 @use 'layout';
+@use 'panel';
 @use 'svg';
 
 @use 'body';
@@ -28,15 +29,14 @@
 }
 
 #menu {
+    z-index   : 2;
+    background: var(--background);
+
     @include layout.flex(center, vertical);
 
-    @include button.color($text: white,
-        $primary: #4485bf,
-        $primary-variant: #506f8a,
-        $secondary: #76add4,
-        $accent: #bbcedc,
-    );
+    pointer-events                        : none;
+    @include button.config($pointer-events: auto);
 
-    z-index   : 2;
-    background: linear-gradient(315deg, #2d343673 0%, #0000003f 74%);
+    @include button.color($text: white);
+    @include panel.indicator;
 }

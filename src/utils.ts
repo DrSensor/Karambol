@@ -8,7 +8,31 @@ export namespace Observable {
 
 export namespace Style {
     type AnyElement = HTMLElement | SVGElement
+    type Styles = Inline | Inline[] | `--${string}`
     export type Inline = Exclude<keyof DTO<CSSStyleDeclaration>, 'length' | 'parentRule'>
+
+    /**@todo should be auto-generated based on res/theme/*.css */
+    export type Theme = 'ocean'
+
+    /**Predefined color under specifc theme */
+    export type DominantColor = 'primary' | 'primary-variant' | 'secondary' | 'accent' | 'background'
+
+    export function theme(name: Theme): void
+    export function theme(): Theme
+    export function theme(name?: Theme) {
+        const stylesheet = document.getElementById('theme') as HTMLLinkElement
+        if (name) stylesheet.href = '/res/theme/' + name + '.css'
+        else return stylesheet.href.replace('/res/theme/', '').replace('.css', '') as Theme
+    }
+
+    export function color(prop: DominantColor, root?: Element): string
+    export function color(key: DominantColor, value: string, root?: Element): void
+    export function color(prop: DominantColor, val?: Element | string, root?: Element) {
+        if (val instanceof Element) root = val
+        const style = getComputedStyle(root ?? document.body)
+        if (typeof val === 'string') style.setProperty(`--${prop}`, val)
+        else return style.getPropertyValue(`--${prop}`)
+    }
 
     export const
         swap = (style: Inline, ...elements: AnyElement[]) => {
@@ -25,15 +49,17 @@ export namespace Style {
                 else swap(el[i], el[i + 1])
             }
         },
-        reset = (styles?: Inline | Inline[], ...elements: AnyElement[]) => {
+        reset = (styles?: Styles, ...elements: AnyElement[]) => {
             if (styles) Style.set(styles, '', ...elements)
             else for (const el of elements) el.removeAttribute('style')
         },
-        set = (styles: Inline | Inline[], value: string, ...elements: AnyElement[]) => {
-            for (const el of elements)
-                if (Array.isArray(styles)) for (const style of styles)
-                    el.style[style] = value
-                else el.style[styles] = value
+        set = (styles: Styles, value: string, ...elements: AnyElement[]) => {
+            if (Array.isArray(styles)) for (const style of styles)
+                for (const el of elements) el.style[style] = value
+            else if (styles.startWith('--'))
+                for (const el of elements) el.style.setProperty(styles, value)
+            else
+                for (const el of elements) el.style[styles] = value
         }
 }
 
