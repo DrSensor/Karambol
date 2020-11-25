@@ -1,10 +1,12 @@
 {
     "scripts": {
-        "clear-cache": "rm -r node_modules/.cache/*",
-        "start": "BROWSER=1 snowpack dev",
-        "start:nobrowser": "snowpack dev",
-        "start:noserve": "NODE_ENV=development snowpack build --watch --no-minify --no-bundle",
+        "clean": "rm -r build/ node_modules/.cache/*",
+        "start": "pnpm hotreload",
+        "start:build": "NODE_ENV=development HMR=0 snowpack build --watch --no-minify --no-bundle",
+        "start:serve": "browser-sync start -c browser-sync.config.js",
         "build": "snowpack build",
+        "hotreload": "snowpack dev",
+        "livereload": "pnpm start:build & browser-sync start -c browser-sync.config.js",
         "postinstall": "vendor/install.mjs && .scripts/mkcert.mjs"
     },
     "dependencies": {
@@ -25,12 +27,14 @@
         "@snowpack/plugin-dotenv": "^2.0.4",
         "@snowpack/plugin-optimize": "^0.2.9",
         "@snowpack/plugin-sass": "^1.1.1",
+        "@types/browser-sync": "^2.26.1",
         "@types/d3-fetch": "^2.0.0",
         "@types/dom-screen-wake-lock": "^1.0.0",
         "@types/lodash": "^4.14.165",
         "@types/react": "^16.9.56",
         "@types/react-dom": "^16.9.9",
         "@types/webxr": "^0.1.0",
+        "browser-sync": "^2.26.13",
         "csstype": "^2.6.14",
         "degit": "^2.8.0",
         "mkcert": "^1.4.0",
