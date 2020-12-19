@@ -1,5 +1,4 @@
 {
-    "include": ["src"],
     "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
@@ -13,6 +12,9 @@
         "paths": {
             "~/*": [
                 "*"
+            ],
+            "@declarative-babylonjs/*": [
+                "vendor/@declarative-babylonjs/packages/*"
             ]
         },
         "jsx": "preserve",
@@ -22,7 +24,17 @@
         "strictFunctionTypes": true,
         "strictPropertyInitialization": true,
         "resolveJsonModule": true,
+        "isolatedModules": true,
+        "skipLibCheck": true,
         "allowSyntheticDefaultImports": true,
         "noEmit": true
-    }
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/.*/",
+        "**/vendor"
+    ]
 }

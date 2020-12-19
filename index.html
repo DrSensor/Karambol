@@ -11,12 +11,15 @@
     <title>Karambol</title>
     <link id="theme" href="/res/theme/ocean.css" rel="stylesheet" />
 
+    <script src="/src/disable-browser-history.js"></script>
+
     <link rel="modulepreload" href="/web_modules/@babylonjs/core/Helpers/sceneHelpers.js" as="script" />
     <link rel="preload" href="/vendor/ammojs/index.js" as="script" />
     <link rel="modulepreload" href="/web_modules/device-detector-js.js" as="script" />
     <link rel="preload" href="/vendor/ARCore/arcore_devicelist.csv" as="fetch" />
 
     <script src="/vendor/ammojs/index.js" async></script>
+    <script type="module" src="/src/feature-detection.js" defer></script>
     <script type="module" src="/src/main.js" defer></script>
     <link rel="stylesheet" href="/res/main.css" />
 </head>

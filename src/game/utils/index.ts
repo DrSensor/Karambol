@@ -1,6 +1,13 @@
+import type { DataType } from '@javelin/ecs'
 import type { Scene } from '@babylonjs/core'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import * as Util from '~/src/utils'
+
+export * from './ecs'
+
+export namespace Transpose {
+    export type ArrayOfDataType<T extends readonly DataType<unknown>[]> = DataType<{ -readonly [K in keyof T]: T[K] extends DataType<infer D> ? D : never }>
+}
 
 export namespace Scene {
     export type Collection<T extends string = string> = { [K in T]: Scene }

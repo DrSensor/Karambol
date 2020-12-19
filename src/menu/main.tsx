@@ -2,7 +2,7 @@ import type { Component } from './utils'
 import { o, h } from 'sinuous'
 
 import { lifecycle, transition, _ } from './utils'
-import { Platform } from '../feature-detection'
+import { Platform } from '~/game.config'
 
 export interface EventListener {
     readonly onstart: (menu: ReturnType<typeof lifecycle>) => void

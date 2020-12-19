@@ -1,6 +1,7 @@
 import { csv } from 'd3-fetch'
 import DeviceDetector from 'device-detector-js'
 import arcoreDevices from '~/vendor/ARCore/arcore_devicelist.csv'
+import { Platform } from '~/game.config'
 
 csv(arcoreDevices).then(data => {
     const
@@ -33,9 +34,9 @@ csv(arcoreDevices).then(data => {
     else globalThis.platform = Platform.Unknown
 })
 
-
-export const enum Platform { AR, VR, Mobile, Desktop, Unknown }
-
 declare global {
     var platform: Platform
+    interface Navigator { // Sometimes typescript can't detect merge declaration in @types/webxr due to @types/dom-screen-wake-lock
+        xr: XRSystem
+    }
 }

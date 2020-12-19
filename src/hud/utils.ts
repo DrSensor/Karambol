@@ -24,8 +24,11 @@ export const
     proxyWithObservable = <T extends ORecord>(value: T): OProxy<T> & { observable: T } =>
         Object.create(proxy(value), { observable: { value } })
 
+export interface Lifecycle {
+    destroy(): void
+}
 
-export const lifecycle: PropertyDescriptorMap = {
+export const lifecycle: { [key in keyof Lifecycle]: PropertyDescriptor } = {
     // TODO: destroy() should cleanup memory (including proxy and observable variable)
     destroy: { value: () => { while (root.firstChild) root.removeChild(root.lastChild!) } }
 }

@@ -1,5 +1,7 @@
+// TODO: use CSS-in-JS (goober) for defining color, dimension, etc
+
 import type { Record } from './utils'
-import { o, h } from 'sinuous'
+import { hs as h } from 'sinuous'
 
 type Dimension = { x: number, y: number, scale: number }
 type Score = { value: number }

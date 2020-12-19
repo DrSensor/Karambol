@@ -1,5 +1,5 @@
 import type { InstancedMesh, Mesh, Vector3 } from '@babylonjs/core'
-import type { Default } from '../engine'
+import type { Default } from '@declarative-babylonjs/ecs'
 
 import { Random } from '../utils'
 import { BoxBuilder as MeshBuilder } from '@babylonjs/core/Meshes/Builders/boxBuilder'
@@ -15,9 +15,7 @@ export namespace Obstacle {
     }
     type RandomCubes = RandomMeshes & { size?: number, scale?: Rangeof<number> }
 
-    export const meshes: (Mesh | InstancedMesh)[] = []
-
-    export const randomCube = (props: RandomCubes): Default.System => function system(
+    export const randomCube = (props: RandomCubes, ...meshes: (Mesh | InstancedMesh)[]) => function system(
         world, { state, scene: { main } }
     ) {
         const { onorigin, oninstance
@@ -41,5 +39,5 @@ export namespace Obstacle {
                     oninstance?.(instance); meshes.push(instance)
                 }; break
         }
-    }
+    } as Default.System
 }

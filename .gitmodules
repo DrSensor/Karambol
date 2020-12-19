@@ -1,0 +1,6 @@
+[submodule "src/game/utils/ecs"]
+	path = src/game/utils/ecs
+	url = git@github.com:DrSensor/javelin-ecs-shorthand.git
+[submodule "vendor/@declarative-babylonjs"]
+	path = vendor/@declarative-babylonjs
+	url = git@github.com:DrSensor/declarative-babylonjs.git

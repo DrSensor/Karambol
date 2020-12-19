@@ -21,7 +21,8 @@
         "device-detector-js": "^2.2.5",
         "goober": "^2.0.15",
         "lodash": "^4.17.20",
-        "sinuous": "^0.27.11"
+        "sinuous": "^0.27.11",
+        "ts-pattern": "^1.1.0"
     },
     "devDependencies": {
         "@snowpack/plugin-dotenv": "^2.0.4",
@@ -33,13 +34,14 @@
         "@types/lodash": "^4.14.165",
         "@types/react": "^16.9.56",
         "@types/react-dom": "^16.9.9",
+        "@types/snowpack-env": "^2.3.2",
         "@types/webxr": "^0.1.0",
         "browser-sync": "^2.26.13",
         "csstype": "^2.6.14",
         "degit": "^2.8.0",
         "mkcert": "^1.4.0",
         "snowpack": "^2.17.1",
-        "typescript": "^4.0.5",
+        "typescript": "^4.1.3",
         "typescript-styled-plugin": "^0.15.0"
     },
     "engines": {

@@ -5,6 +5,7 @@
 const { BROWSER, HMR, PORT } = process.env
     , { parse } = JSON
     , asIf = (val, ty) => typeof parse(val ?? null) === ty ? val : null
+    , { compilerOptions: tsconfig } = require('./tsconfig.json')
 
 // Snowpack Configuration File
 // See all supported options: https://www.snowpack.dev/#configuration
@@ -21,7 +22,10 @@ module.exports = {
         secure: true,
         hmr: Boolean(parse(HMR ?? true)), // WARNING: hot-reloading many times will cause memory leak, make sure to close then reopen the tab
     },
-    alias: { "~": "." },
+    alias: {
+        "~": ".",
+        "@declarative-babylonjs": "./vendor/@declarative-babylonjs/packages",
+    },
     // install: ["memo", "sinuous/observable"],
     plugins: [
         ["@snowpack/plugin-optimize", {
@@ -30,7 +34,10 @@ module.exports = {
         }],
         ["@snowpack/plugin-sass", { native: true }],
         "@snowpack/plugin-dotenv",
-        "./.scripts/snowpack-plugin/jsx-factory.js",
+        ["./.scripts/snowpack-plugin/jsx-factory.js", {
+            jsxFactory: tsconfig.jsxFactory,
+            jsxFragment: tsconfig.jsxFragmentFactory
+        }],
     ],
     installOptions: {
         installTypes: true,

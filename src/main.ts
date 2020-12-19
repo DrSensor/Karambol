@@ -1,6 +1,10 @@
+import has from "~/game.config"
+
 import { Game, Level } from './game'
 import { Menu } from './menu'
 import { HUD } from './hud'
+
+const startLevel = Level[has.startLevel]
 
 const game = Game({
     fullscreen: false,
@@ -12,18 +16,19 @@ const game = Game({
     onstop: () => console.debug('game stop'),
 })
 
-let display: ReturnType<typeof HUD>
+let display: ReturnType<typeof HUD> = (has.menu || has.hud && HUD()) as any
 
-Menu({
+if (has.menu) Menu({
+
     hotkey: {
         pause: ['Escape', 'Enter']
     },
 
     onstart() {
         // TODO: use Topic to update hud display inside game.system
-        display = HUD()
+        display = has.hud && HUD()
         display.score = 100
-        Level.sandbox(game).start()
+        startLevel(game).start()
     },
 
     onresume: () => game.start(),
@@ -34,3 +39,5 @@ Menu({
         game.stop()
     },
 })
+
+else startLevel(game).start()

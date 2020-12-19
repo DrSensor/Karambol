@@ -1,4 +1,5 @@
 import type { Observable } from 'sinuous/observable'
+
 export namespace Observable {
     export type O<T> = Observable<T>
     export type Record<T extends {}> = { [O in keyof T]: Observable<T[O]> }
@@ -65,6 +66,8 @@ export namespace Style {
 
 export namespace Random {
     export const
+        crypto = (ctor: IntArrayCtor) =>
+            Number(window.crypto.getRandomValues(new ctor(1))),
         between = (...[min, max]: Rangeof<number>) => Math.random() * (max - min) + min,
         numlist = (count: number, [min, max]: Rangeof<number>) =>
             Array.from(Array(count), () => between(min, max))
@@ -84,3 +87,8 @@ export namespace Vec3 {
 export namespace Range {
     export const isNumber = (range: Rangeof<any>): range is Rangeof<number> => range.every(t => typeof t === 'number')
 }
+
+type Int8ArrayCtor = Uint8ArrayConstructor | Int8ArrayConstructor
+type Int16ArrayCtor = Uint16ArrayConstructor | Int16ArrayConstructor
+type Int32ArrayCtor = Uint32ArrayConstructor | Int32ArrayConstructor
+type IntArrayCtor = Int8ArrayCtor | Int16ArrayCtor | Int32ArrayCtor

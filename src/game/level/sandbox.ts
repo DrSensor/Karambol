@@ -1,4 +1,4 @@
-import type { Default, default as game } from '../engine'
+import type { Default, default as game } from '@declarative-babylonjs/ecs'
 import { Obstacle } from '../system'
 
 const sandbox: Default.Level = {
